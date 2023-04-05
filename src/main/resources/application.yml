@@ -1,0 +1,25 @@
+spring:
+  batch:
+    job:
+      names: ${job.name:NONE}
+    jdbc:
+      initialize-schema: always
+  datasource:
+    url: jdbc:mysql://localhost:3306/damdorani?serverTimezone=Asia/Seoul
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: damdorani
+    password: ekaehfksl0405
+  jpa:
+    show-sql: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+  devtools:
+    restart:
+      enabled: true
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
