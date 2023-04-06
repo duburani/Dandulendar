@@ -5,9 +5,9 @@ spring:
     jdbc:
       initialize-schema: always
   datasource:
-    url: jdbc:mysql://localhost:3306/damdorani?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://duburani.csiv33i8vvhw.us-east-2.rds.amazonaws.com:3306/damdorani?serverTimezone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: damdorani
+    username: admin
     password: ekaehfksl0405
   jpa:
     show-sql: true
