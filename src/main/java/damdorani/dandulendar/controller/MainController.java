@@ -12,4 +12,9 @@ public class MainController {
         log.info("main controller");
         return "main";
     }
+
+    @RequestMapping("/regist")
+    public String regist() {
+        return "regist";
+    }
 }

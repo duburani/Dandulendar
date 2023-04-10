@@ -1,9 +1,9 @@
 spring:
-  batch:
-    job:
-      names: ${job.name:NONE}
-    jdbc:
-      initialize-schema: always
+#  batch:
+#    job:
+#      names: ${job.name:NONE}
+#    jdbc:
+#      initialize-schema: always
   datasource:
     url: jdbc:mysql://duburani.csiv33i8vvhw.us-east-2.rds.amazonaws.com:3306/damdorani?serverTimezone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -11,6 +11,13 @@ spring:
     password: ekaehfksl0405
   jpa:
     show-sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
