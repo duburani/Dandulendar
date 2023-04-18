@@ -14,5 +14,5 @@ public class CalendarForm {
     @NotEmpty(message = "달력 색상은 필수 입니다.")
     private String color;
     private String memorial_yn;
-    private String group_id;
+    private int group_id;
 }

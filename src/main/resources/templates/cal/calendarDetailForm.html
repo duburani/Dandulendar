@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script>
+    $(function () {
+      // 시작일시 종료일시 설정
+      $('#calDtlStEd .time').timepicker({
+        'showDuration': true
+        ,'timeFormat': 'H:i'
+      });
+
+      $('#calDtlStEd .date').datepicker({
+        format : 'yyyy-mm-dd'
+        ,autoclose : true
+        ,todayHighlight : true	//오늘 날짜에 하이라이팅 기능 기본값 :false
+      });
+
+
+      if($("#start_time").val() == null || $("#start_time").val() == ""){
+        let today = new Date();
+        let todayHours = today.getHours();
+
+        $("#start_time").timepicker('setTime', todayHours + ":00");
+        $("#end_time").timepicker('setTime', todayHours + 1 + ":00");
+      }
+
+      // 반복 여부
+      $("#repeat_ch").change(function(){
+        if($("#repeat_ch").is(":checked")){
+          $("#repeat_yn").val("Y");
+        }else{
+          $("#repeat_yn").val("N");
+        }
+      });
+
+      // 종일 여부
+      $("#allday_ch").change(function(){
+        if($("#allday_ch").is(":checked")){
+          $("#allday_yn").val("Y");
+          $("#calDtlStEd .col-sm-3").hide();
+        }else{
+          $("#allday_yn").val("N");
+          $("#calDtlStEd .col-sm-3").show();
+        }
+      });
+
+      var calendarDetailForm = document.calendarDetailForm;
+
+      $("#updateCalDtlBtn").click(function(){
+        if($("#cal_dtl_id").val() != 0){ // 수정일 때
+          $("#calendarDetailForm #_method").val("PUT");
+        }
+        calendarDetailForm.submit();
+      });
+    });
+
+    // 달력 일정 상세 삭제 처리
+    function deleteCalDetail(calDtlId){
+      $("#calendarDetailForm #_method").val("PUT");
+      $("#calendarDetailForm").attr("action", "/calendars/detail/" + calDtlId);
+      console.log($("#calendarDetailForm"));
+
+      $("#calendarDetailForm").submit();
+    }
+  </script>
+</head>
+<body>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="calendarDetailModalLabel">일정 생성</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="row gx-2" id="calendarDetailForm" name="calendarDetailForm" th:object="${calendarDetailForm}" method="post" action="/calendars/detail/new">
+          <input type="hidden" id="_method" name="_method" value="">
+          <input type="hidden" id="cal_dtl_id" name="cal_dtl_id" th:field="*{cal_dtl_id}">
+          <div class="mb-3">
+            <label class="col-form-label">달력</label>
+            <select class="form-select" aria-label="Default select example" name="cal_id">
+              <option th:each="cd : ${calendarList}" th:value="${cd.cal_id}" th:text="${cd.cal_title}" th:selected="${#strings.equals(cd.cal_id, #strings.defaultString(cal_id, 0))}"></option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="title" class="col-form-label">제목</label>
+            <input type="text" class="form-control" id="title" name="title" th:field="*{title}">
+          </div>
+
+          <div class="mb-3">
+            <div class="row" id="calDtlStEd">
+              <div class="col-md-5">
+                <label class="col-form-label" for="start_date">시작일</label>
+                <input type="text" class="date form-control" id="start_date" name="start_date" th:value="${#strings.isEmpty(calendarDetailForm.start_date) ? dateStr : calendarDetailForm.start_date}">
+              </div>
+              <div class="col-sm-3" th:style="${#strings.equals(#strings.defaultString(calendarDetailForm.allday_yn, 'Y'), 'Y') ? 'display:none;' : ''}">
+                <label class="col-form-label" for="start_time">시작시간</label>
+                <input type="text" class="time form-control" id="start_time" name="start_time" th:field="*{start_time}">
+              </div>
+              <div class="col-md-5">
+                <label class="col-form-label" for="end_date">종료일</label>
+                <input type="text" class="date form-control" id="end_date" name="end_date" th:value="${#strings.isEmpty(calendarDetailForm.end_date) ? dateStr : calendarDetailForm.end_date}">
+              </div>
+              <div class="col-sm-3" th:style="${#strings.equals(#strings.defaultString(calendarDetailForm.allday_yn, 'Y'), 'Y') ? 'display:none;' : ''}">
+                <label class="col-form-label" for="end_time">종료시간</label>
+                <input type="text" class="time form-control" id="end_time" name="end_time" th:field="*{end_time}">
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="form-check form-switch">
+              <label class="allday_ch">종일</label>
+              <input class="form-check-input" type="checkbox" id="allday_ch" th:checked="${#strings.equals(#strings.defaultString(calendarDetailForm.allday_yn, 'Y'), 'Y')}">
+              <input type="hidden" id="allday_yn" name="allday_yn" th:value="${#strings.defaultString(calendarDetailForm.allday_yn, 'Y')}">
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="form-check form-switch">
+              <label class="repeat_ch">반복</label>
+              <input class="form-check-input" type="checkbox" id="repeat_ch" th:checked="${#strings.equals(#strings.defaultString(calendarDetailForm.repeat_yn, 'N'), 'Y')}">
+              <input type="hidden" id="repeat_yn" name="repeat_yn" th:value="${#strings.defaultString(calendarDetailForm.repeat_yn, 'N')}">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="contents" class="col-form-label">메모:</label>
+            <textarea class="form-control" id="contents" name="contents" th:field="*{contents}"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        <button type="button" id="updateCalDtlBtn" class="btn btn-primary">저장</button>
+        <button type="button" id="deleteCalDtlBtn" class="btn btn-danger" th:unless="${#strings.equals(calendarDetailForm.cal_dtl_id, 0)}" th:onclick="'deleteCalDetail(' + ${calendarDetailForm.cal_dtl_id} + ');'">삭제</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

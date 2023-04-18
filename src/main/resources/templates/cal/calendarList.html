@@ -4,87 +4,157 @@
       layout:decorate="~{fragments/layout}">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" type="text/css" href="/css/jquery.timepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-datepicker.css" />
+    <link rel="stylesheet" type="application/octet-stream" href="/css/bootstrap-datepicker.css.map" />
+
+    <script type="text/javascript" src="/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="/js/jquery.timepicker.js"></script>
+
+    <script type="text/javascript" src="/js/datepair.js"></script>
+    <script type="text/javascript" src="/js/jquery.datepair.js"></script>
+
     <script src='/fullcalendar-6.1.5/dist/index.global.js'></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        $(function () {
             var calendarEl = document.getElementById('calendar');
-
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
-                },
-                initialDate: '2023-01-12',
-                navLinks: true, // can click day/week names to navigate views
-                businessHours: true, // display business hours
-                editable: true,
-                selectable: true,
-                events: [
-                    {
-                        title: 'Business Lunch',
-                        start: '2023-01-03T13:00:00',
-                        constraint: 'businessHours'
-                    },
-                    {
-                        title: 'Meeting',
-                        start: '2023-01-13T11:00:00',
-                        constraint: 'availableForMeeting', // defined below
-                        color: '#257e4a'
-                    },
-                    {
-                        title: 'Conference',
-                        start: '2023-01-18',
-                        end: '2023-01-20'
-                    },
-                    {
-                        title: 'Party',
-                        start: '2023-01-29T20:00:00'
-                    },
-
-                    // areas where "Meeting" must be dropped
-                    {
-                        groupId: 'availableForMeeting',
-                        start: '2023-01-11T10:00:00',
-                        end: '2023-01-11T16:00:00',
-                        display: 'background'
-                    },
-                    {
-                        groupId: 'availableForMeeting',
-                        start: '2023-01-13T10:00:00',
-                        end: '2023-01-13T16:00:00',
-                        display: 'background'
-                    },
-
-                    // red areas where no events can be dropped
-                    {
-                        start: '2023-01-24',
-                        end: '2023-01-28',
-                        overlap: false,
-                        display: 'background',
-                        color: '#ff9f89'
-                    },
-                    {
-                        start: '2023-01-06',
-                        end: '2023-01-08',
-                        overlap: false,
-                        display: 'background',
-                        color: '#ff9f89'
+                    right: 'addEventButton prev,next today'
+                }
+                ,editable: true
+                ,selectable: true
+                ,events: calendarDetailList()
+                // ,events:
+                //     [
+                //         {
+                //             "title": "일정",
+                //             "start": "2023-04-05T09:00:00",
+                //             "end": "2023-04-05T18:00:00"
+                //         },
+                //         {
+                //             "title": "에버랜드",
+                //             "start": "2023-04-17T00:00",
+                //             "end": "2023-04-18T00:00",
+                //             "color" : "pink",
+                //             "allDay" : true
+                //         },
+                //         {
+                //             "title": "롯데월드",
+                //             "start": "2023-04-14",
+                //             "end": "2023-04-14",
+                //             "color" : "pink",
+                //             "allDay" : true
+                //         },
+                //         {
+                //             "title": "여직원 점심",
+                //             "start": "2023-04-19T00:00",
+                //             "end": "2023-04-19T00:00"
+                //         },
+                //         {
+                //             "title": "가족모임",
+                //             "start": "2023-04-27T09:00:00",
+                //             "end": "2023-04-29T18:00:00",
+                //             "color" : "green",
+                //             "allDay" : true
+                //         },
+                //         {
+                //             "title": "출장",
+                //             "start": "2023-04-20T00:00",
+                //             "end": "2023-04-21T00:00",
+                //             "color" : "black",
+                //             "allDay" : true
+                //         }
+                //     ]
+                ,customButtons:{
+                    addEventButton : {
+                        text: "달력추가",
+                        click : function(){
+                            setCal();
+                            $("#calendarCateModal").modal('show');
+                        }
                     }
-                ]
+                }
+                ,dateClick : function (info) {
+                    setCalDtl('I', info);
+                    // $("#calendarDetailModal").modal('show');
+                }
+                ,eventClick : function (info) {
+                    setCalDtl('U', info);
+                    // showCalendarDetailView(info);
+                }
+                ,dayMaxEventRows : 4
+                ,editable: false
+                ,droppable: false
+                ,dayPopoverFormat: { year: 'numeric', month: 'long', day: 'numeric' }
+                ,contentHeight : 600
             });
 
             calendar.render();
-        });
 
-        $(function () {
-            var form = $("#calendarForm");
+
+            var calendarForm = document.calendarForm;
+
             $("#updateCalBtn").click(function(){
-                console.log(form);
-                // $("#calendarForm").attr("action", "/calendars/new");
-                form.submit();
+                calendarForm.submit();
+            });
+
+            // 기념일 여부
+            $("#memorial_ch").change(function(){
+                if($("#memorial_ch").is(":checked")){
+                    $("#memorial_yn").val("Y");
+                }else{
+                    $("#memorial_yn").val("N");
+                }
             });
         });
+
+        // 달력 셀에 일정 뿌리기
+        function calendarDetailList(){
+            let result = "";
+            $.ajax({
+                url : "/calendars/detail"
+                ,method : "GET"
+                ,async : false
+                ,dataType : "JSON"
+                ,success : function (data){
+                    result = data;
+                }
+            });
+            return result;
+        }
+
+        // 달력 셋팅
+        function setCal(){
+            $.ajax({
+                url : "/calendars/new"
+                ,method: "GET"
+                ,async: false
+                // ,data : data
+                ,success : function (data){
+                    $("#calendarCateModal").html(data);
+                    $("#calendarCateModal").modal('show');
+                }
+            });
+        }
+
+        // 달력 일정 상세 조회
+        function setCalDtl(type, info){
+            let calId = type == 'I' ? "" : info.event.id;
+            let dateStr = type == 'I' ? info.dateStr : "";
+            let data = {"calDtlId" : calId, "dateStr" : dateStr};
+            $.ajax({
+                url : "/calendars/detail/new"
+                ,method: "GET"
+                ,async: false
+                ,data : data
+                ,success : function (data){
+                    $("#calendarDetailModal").html(data);
+                    $("#calendarDetailModal").modal('show');
+                }
+            });
+        }
     </script>
     <style>
 
@@ -107,110 +177,16 @@
 <body>
     <div layout:fragment="content" id="calendarBody">
         <div>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#calendarCateForm" data-bs-whatever="@getbootstrap">달력 카테고리</button>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#calendarDetailForm" data-bs-whatever="@getbootstrap">달력 일정 상세</button>
+            <div class="modal fade" id="calendarCateModal" tabindex="-1" aria-labelledby="calendarCateModalLabel" aria-hidden="true"></div>
 
-            <div class="modal fade" id="calendarCateForm" tabindex="-1" aria-labelledby="calendarCateFormLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="calendarCateFormLabel">달력 생성</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="calendarForm" name="calendarForm" th:object="${calendarForm}" method="post" action="/calendars/new">
-                                <div class="mb-3">
-                                    <label for="exampleColorInput" class="form-label">달력 색상</label>
-                                    <input type="color" class="form-control form-control-color" id="exampleColorInput" value="#563d7c" title="Choose your color" th:field="*{color}">
+            <div class="modal fade" id="calendarDetailModal" tabindex="-1" aria-labelledby="calendarDetailModalLabel" aria-hidden="true"></div>
 
-<!--                                    <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요"-->
-<!--                                           th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'">-->
-<!--                                    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Incorrect date</p>-->
-
-                                </div>
-                                <div class="mb-3">
-                                    <label for="calendar-name" class="col-form-label">달력 이름</label>
-                                    <input type="text" class="form-control" id="calendar-name" th:field="*{cal_title}">
-                                </div>
-                                <div class="mb-3">
-                                    <div class="form-check form-switch">
-                                        <label class="memorial-yn">기념일</label>
-                                        <input class="form-check-input" type="checkbox" id="memorial_yn" value="N" name="memorial_yn">
-                                    </div>
-                                </div>
-                                <input type="text" name="group_id" value="100">
-<!--                                <input type="text" th:field="*{group_id}" th:value="">-->
-
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                            <button type="button" id="updateCalBtn" class="btn btn-primary">저장</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="calendarDetailForm" tabindex="-1" aria-labelledby="calendarDetailFormLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="calendarDetailFormLabel">일정 생성</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form th:object="${calendarDetailForm}" method="post">
-                                <div class="mb-3">
-                                    <label class="col-form-label">게시판</label>
-                                    <select class="form-select" aria-label="Default select example" th:each="cd : ${calendarList}">
-                                        <option selected th:value="${cd.cal_id}" name="cal_id" th:text="${cd.cal_title}"></option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="title-name" class="col-form-label">제목</label>
-                                    <input type="text" class="form-control" id="title-name">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="start-date" class="col-form-label">시작</label>
-                                    <input type="text" class="form-control" id="start-date">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="end-date" class="col-form-label">종료</label>
-                                    <input type="text" class="form-control" id="end-date">
-                                </div>
-                                <div class="mb-3">
-                                    <div class="form-check form-switch">
-                                        <label class="allday-yn">종일</label>
-                                        <input class="form-check-input" type="checkbox" id="allday-yn">
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="form-check form-switch">
-                                        <label class="repeat-yn">반복</label>
-                                        <input class="form-check-input" type="checkbox" id="repeat-yn">
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="message-text" class="col-form-label">메모:</label>
-                                    <textarea class="form-control" id="message-text"></textarea>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Send message</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="modal fade" id="calendarDetailViewModal" tabindex="-1" aria-labelledby="calendarDetailModalViewLabel" aria-hidden="true"></div>
         </div>
 
 
         <!-- 캘린더 -->
         <div id='calendar'></div>
-
-
     </div>
 </body>
 </html>

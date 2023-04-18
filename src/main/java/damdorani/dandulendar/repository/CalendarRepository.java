@@ -1,7 +1,11 @@
 package damdorani.dandulendar.repository;
 
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import damdorani.dandulendar.domain.Calendar;
 import damdorani.dandulendar.domain.CalendarDetail;
+import static damdorani.dandulendar.domain.QCalendar.calendar;
+import static damdorani.dandulendar.domain.QCalendarDetail.calendarDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CalendarRepository {
     private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
 
     public void saveCalendar(Calendar calendar){
         em.persist(calendar);
@@ -22,10 +27,12 @@ public class CalendarRepository {
     }
 
     public List<Calendar> findCalendarList(){
-        return em.createQuery("select c from Calendar c where del_yn = 'N'", Calendar.class).getResultList();
+        return queryFactory
+                .selectDistinct(calendar)
+                .from(calendar)
+                .fetch();
+//        return em.createQuery("select c from Calendar c where del_yn = 'N'", Calendar.class).getResultList();
     }
-
-
 
     public void saveCalendarDetail(CalendarDetail calendarDetail){
         em.persist(calendarDetail);
@@ -35,7 +42,16 @@ public class CalendarRepository {
         return em.find(CalendarDetail.class, calDtlId);
     }
 
-    public List<CalendarDetail> findCalendarDetailList() {
-        return em.createQuery("select c from CalendarDetail c where del_yn = 'N'", CalendarDetail.class).getResultList();
+    public List<Calendar> findCalendarDetailList() {
+        return queryFactory
+                .selectDistinct(calendar)
+                .from(calendar)
+                .join(calendar.calendars, calendarDetail)
+                .where(calendarDetail.del_yn.eq("N"))
+                .fetchJoin()
+                .fetch();
     }
+
+
+
 }

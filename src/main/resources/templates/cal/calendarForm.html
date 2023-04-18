@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script>
+
+    // 그룹 색 지정
+
+    function selectGroupColor(param) {
+      console.log(param.dataset.value);
+      $("#color").val(param.dataset.value);
+    }
+
+    $(function () {
+
+    });
+  </script>
+</head>
+<body>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="calendarCateModalLabel">달력 생성</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="calendarForm" name="calendarForm" method="post" action="/calendars/new">
+          <div class="mb-3">
+            <label class="col-form-label">달력</label>
+            <ul class="list-group">
+              <li class="list-group-item" th:each="cd : ${calendarList}" th:style="'background-color:' + ${cd.color} + ';'"  th:value="${cd.cal_id}" th:text="${cd.cal_title}"></li>
+            </ul>
+          </div>
+          <div class="mb-3">
+            <div class="list-group">
+              <input type="text" id="color" name="color" value="">
+              <a href="javascript:void(0);" onclick="selectGroupColor(this);" class="list-group-item list-group-item-action" data-value="#ffffff" style="background-color: #ffffff">white</a>
+              <a href="javascript:void(0);" onclick="selectGroupColor(this);" class="list-group-item list-group-item-action" data-value="#cfe2ff" style="background-color: #cfe2ff">blue</a>
+              <a href="javascript:void(0);" onclick="selectGroupColor(this);" class="list-group-item list-group-item-action" data-value="#e2e3e5" style="background-color: #e2e3e5">lite-gray</a>
+              <a href="javascript:void(0);" onclick="selectGroupColor(this);" class="list-group-item list-group-item-action" data-value="#d1e7dd" style="background-color: #d1e7dd">green</a>
+              <a href="javascript:void(0);" onclick="selectGroupColor(this);" class="list-group-item list-group-item-action" data-value="#f8d7da" style="background-color: #f8d7da">red</a>
+              <a href="javascript:void(0);" onclick="selectGroupColor(this);" class="list-group-item list-group-item-action" data-value="#fff3cd" style="background-color: #fff3cd">yellow</a>
+              <a href="javascript:void(0);" onclick="selectGroupColor(this);" class="list-group-item list-group-item-action" data-value="#cff4fc" style="background-color: #cff4fc">mint</a>
+              <a href="javascript:void(0);" onclick="selectGroupColor(this);" class="list-group-item list-group-item-action" data-value="#d3d3d4" style="background-color: #d3d3d4">dark-gray</a>
+            </div>
+
+            <select class="form-select" aria-label="Default select example" name="color">
+              <option class="list-group-item list-group-item-action" value="#ffffff" style="color: #ffffff"></option>
+              <option class="list-group-item list-group-item-action" value="#cfe2ff" style="color: #cfe2ff;">blue</option>
+              <option class="list-group-item list-group-item-action" value="#e2e3e5" style="color: #e2e3e5">lite-gray</option>
+              <option class="list-group-item list-group-item-action" value="#d1e7dd" style="color: #d1e7dd">green</option>
+              <option class="list-group-item list-group-item-action" value="#f8d7da" style="color: #f8d7da">red</option>
+              <option class="list-group-item list-group-item-action" value="#fff3cd" style="color: #fff3cd">yellow</option>
+              <option class="list-group-item list-group-item-action" value="#cff4fc" style="color: #cff4fc">mint</option>
+              <option class="list-group-item list-group-item-action" value="#d3d3d4" style="color: #d3d3d4">dark-gray</option>
+            </select>
+
+            <div class="container">
+              <div class="row row-cols-4">
+                <div class="col list-group-item list-group-item-action" value="#ffffff" style="background-color: #ffffff" >white</div>
+                <div class="col list-group-item list-group-item-action" value="#cfe2ff" style="background-color: #cfe2ff" >blue</div>
+                <div class="col list-group-item list-group-item-action" value="#e2e3e5" style="background-color: #e2e3e5" >light-gray</div>
+                <div class="col list-group-item list-group-item-action" value="#d1e7dd" style="background-color: #d1e7dd" >green</div>
+                <div class="col list-group-item list-group-item-action" value="#f8d7da" style="background-color: #f8d7da" >red</div>
+                <div class="col list-group-item list-group-item-action" value="#fff3cd" style="background-color: #fff3cd" >yellow</div>
+                <div class="col list-group-item list-group-item-action" value="#cff4fc" style="background-color: #cff4fc" >mint</div>
+                <div class="col list-group-item list-group-item-action" value="#d3d3d4" style="background-color: #d3d3d4" >dark-gray</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="mb-3">
+            <label for="cal_title" class="col-form-label">달력 이름</label>
+            <input type="text" class="form-control" id="cal_title">
+          </div>
+          <div class="mb-3">
+            <div class="form-check form-switch">
+              <label class="memorial-yn">기념일</label>
+              <input type="hidden" id="memorial_yn" name="memorial_yn" value="N">
+              <input class="form-check-input" type="checkbox" id="memorial_ch">
+            </div>
+          </div>
+          <input type="text" name="group_id" value="100">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        <button type="button" id="updateCalBtn" class="btn btn-primary">저장</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -18,5 +18,5 @@ public class CalendarDetailForm {
     private String end_time;
     private String repeat_yn;
     private String allday_yn;
-    private String cal_id;
+    private int cal_id;
 }

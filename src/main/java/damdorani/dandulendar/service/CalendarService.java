@@ -2,7 +2,11 @@ package damdorani.dandulendar.service;
 
 import damdorani.dandulendar.domain.Calendar;
 import damdorani.dandulendar.domain.CalendarDetail;
+import damdorani.dandulendar.domain.Group;
+import damdorani.dandulendar.dto.CalendarDetailForm;
+import damdorani.dandulendar.dto.CalendarForm;
 import damdorani.dandulendar.repository.CalendarRepository;
+import damdorani.dandulendar.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +21,8 @@ public class CalendarService {
 
     // 달력 생성
     @Transactional
-    public void craete(Calendar calendar){
+    public void craete(CalendarForm calendarForm, Group group){
+        Calendar calendar = new Calendar(calendarForm.getCal_title(), calendarForm.getColor(), calendarForm.getMemorial_yn(), group);
         calendarRepository.saveCalendar(calendar);
     }
 
@@ -48,8 +53,29 @@ public class CalendarService {
 
     // 달력 상세 등록
     @Transactional
-    public void craete(CalendarDetail calendarDetail){
+    public void craete(CalendarDetailForm calendarDetailForm){
+        Calendar calendar = findCalendar(calendarDetailForm.getCal_id());
+        CalendarDetail calendarDetail = CalendarDetail.builder()
+                .title(calendarDetailForm.getTitle())
+                .contents(calendarDetailForm.getContents())
+                .start_date(calendarDetailForm.getStart_date())
+                .start_time(calendarDetailForm.getStart_time())
+                .end_date(calendarDetailForm.getEnd_date())
+                .end_time(calendarDetailForm.getEnd_time())
+                .repeat_yn(calendarDetailForm.getRepeat_yn())
+                .allday_yn(calendarDetailForm.getAllday_yn())
+                .del_yn("N")
+                .calendar(calendar)
+                .build();
         calendarRepository.saveCalendarDetail(calendarDetail);
+    }
+
+    // 달력 상세 수정
+    @Transactional
+    public void updateCalendarDetail(CalendarDetailForm calendarDetailForm){
+        Calendar calendar = findCalendar(calendarDetailForm.getCal_id());
+        CalendarDetail calendarDetail = calendarRepository.findCalendarDetail(calendarDetailForm.getCal_dtl_id());
+        calendarDetail.updateCalendarDetail(calendarDetailForm, calendar);
     }
 
 
@@ -58,11 +84,18 @@ public class CalendarService {
         return calendarRepository.findCalendarDetail(cal_dtl_id);
     }
 
-    public List<CalendarDetail> findCalendarDetailList(){
-        return calendarRepository.findCalendarDetailList();
+    // 달력 일정 상세 목록 조회
+    public List<Calendar> findCalendarDetailList(){
+        List<Calendar> calendarDetailList = calendarRepository.findCalendarDetailList();
+        return calendarDetailList;
     }
 
-    // 달력 상세 삭제
+    // 달력 상세 삭제 (del_yn = 'Y')
+    @Transactional
+    public void deleteCalendarDetail(int cal_dtl_id){
+        CalendarDetail calendarDetail = calendarRepository.findCalendarDetail(cal_dtl_id);
+        calendarDetail.updateDelYn("Y");
+    }
 
-    // 달력 상세 수정
+
 }
