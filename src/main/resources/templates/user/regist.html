@@ -1,22 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>회원가입</title>
+  <meta charset="UTF-8">
+  <title>회원가입</title>
 
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <!-- Favicon-->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <!-- Favicon-->
 <!--    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />-->
-    <!-- Font Awesome icons (free version)-->
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    <!-- Google fonts-->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="/css/styles.css" rel="stylesheet" />
+  <!-- Font Awesome icons (free version)-->
+  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+  <!-- Google fonts-->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <link href="/css/styles.css" rel="stylesheet" />
+  <script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script>
+    $(function () {
+
+    });
+  </script>
 </head>
 <!--<body id="page-top">-->
 <body>
@@ -42,32 +48,35 @@
           <!-- To make this form functional, sign up at-->
           <!-- https://startbootstrap.com/solution/contact-forms-->
           <!-- to get an API token!-->
-          <form id="contactForm" data-sb-form-api-token="API_TOKEN">
+          <form id="userForm" data-sb-form-api-token="API_TOKEN" method="POST" action="/regist">
+            <input type="hidden" name="user_id" th:value="${userInfo.user_id}">
+            <input type="hidden" name="provider" th:value="${userInfo.provider}">
+
             <!-- Name input-->
             <div class="form-floating mb-3">
-              <input class="form-control" id="name" type="text" placeholder="Enter your name..." data-sb-validations="required" />
-              <label for="name">Full name</label>
+              <input class="form-control" id="user_name" name="user_name" th:value="${userInfo.user_name}" type="text" placeholder="Enter your name..." data-sb-validations="required">
+              <label for="user_name">이름</label>
               <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
             </div>
             <!-- Email address input-->
             <div class="form-floating mb-3">
-              <input class="form-control" id="email" type="email" placeholder="name@example.com" data-sb-validations="required,email" />
-              <label for="email">Email address</label>
+              <input class="form-control" id="email" name="email" type="email" th:value="${userInfo.email}" placeholder="name@example.com" data-sb-validations="required,email" />
+              <label for="email">이메일</label>
               <div class="invalid-feedback" data-sb-feedback="email:required">An email is required.</div>
               <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.</div>
             </div>
             <!-- Phone number input-->
             <div class="form-floating mb-3">
-              <input class="form-control" id="phone" type="tel" placeholder="(123) 456-7890" data-sb-validations="required" />
-              <label for="phone">Phone number</label>
+              <input class="form-control" id="phone" name="phone" type="tel" placeholder="(123) 456-7890" data-sb-validations="required" />
+              <label for="phone">연락처</label>
               <div class="invalid-feedback" data-sb-feedback="phone:required">A phone number is required.</div>
             </div>
-            <!-- Message input-->
-            <div class="form-floating mb-3">
-              <textarea class="form-control" id="message" type="text" placeholder="Enter your message here..." style="height: 10rem" data-sb-validations="required"></textarea>
-              <label for="message">Message</label>
-              <div class="invalid-feedback" data-sb-feedback="message:required">A message is required.</div>
-            </div>
+<!--            &lt;!&ndash; Message input&ndash;&gt;-->
+<!--            <div class="form-floating mb-3">-->
+<!--              <textarea class="form-control" id="memorial_date" name="memorial_date" type="text" placeholder="기념일을 입력하세요" style="height: 10rem" data-sb-validations="required"></textarea>-->
+<!--              <label for="memorial_date">기념일</label>-->
+<!--              <div class="invalid-feedback" data-sb-feedback="message:required">A message is required.</div>-->
+<!--            </div>-->
             <!-- Submit success message-->
             <!---->
             <!-- This is what your users will see when the form-->
@@ -86,7 +95,7 @@
             <!-- an error submitting the form-->
             <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">Error sending message!</div></div>
             <!-- Submit Button-->
-            <button class="btn btn-primary btn-xl disabled" id="submitButton" type="submit">Send</button>
+            <button class="btn btn-primary btn-xl" id="submitButton" type="submit">Send</button>
           </form>
         </div>
       </div>
