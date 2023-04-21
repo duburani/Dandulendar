@@ -1,16 +1,19 @@
 package damdorani.dandulendar.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 public class User extends HashMap<String, Object> {
     @Id
     private String user_id;
@@ -22,19 +25,13 @@ public class User extends HashMap<String, Object> {
     private String reg_dt;
     private String mod_dt;
     private String provider;
-    private String memorialDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<UserGroup> userGroups = new ArrayList<>();
-
-
-    public User(String user_id, String user_name, String phone, String email, String provider) {
-        this.user_id = user_id;
-        this.user_name = user_name;
-        this.phone = phone;
-        this.email = email;
-        this.provider = provider;
-    }
 
     protected User() {}
 }

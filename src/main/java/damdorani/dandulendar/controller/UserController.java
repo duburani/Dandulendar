@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 @Controller
@@ -144,7 +146,7 @@ public class UserController {
             throw new RuntimeException(e);
         }
 
-        return "user/regist";
+        return "join";
     }
 
     @PostMapping("/regist")
@@ -158,6 +160,19 @@ public class UserController {
         model.addAttribute("calendarForm", new CalendarForm());
 
         return "cal/calendarList";
+    }
+
+    @GetMapping("/login")
+    public String naverLogin(HttpSession session){
+        
+        String toek = "";
+
+        System.out.println("Session: " + session);
+
+        Enumeration<String> attributeNames = session.getAttributeNames();
+
+
+        return "login/login";
     }
 
 
