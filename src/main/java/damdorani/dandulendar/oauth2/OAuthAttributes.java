@@ -6,19 +6,14 @@ import lombok.Getter;
 import java.util.Map;
 
 @Getter
+@Builder
 public class OAuthAttributes {
     private Map<String, Object> attributes;
     private String nameAttributeKey;
+    private String id;
     private String user_name;
     private String email;
-
-    @Builder
-    public OAuthAttributes(Map<String, Object> attributes, String nameAttributeKey, String user_name, String email, String picture) {
-        this.attributes = attributes;
-        this.nameAttributeKey = nameAttributeKey;
-        this.user_name = user_name;
-        this.email = email;
-    }
+    private String phone;
 
     public static OAuthAttributes of(String socialName, String userNameAttributeName, Map<String, Object> attributes){
         if("kakao".equals(socialName)){
@@ -40,8 +35,10 @@ public class OAuthAttributes {
         Map<String, Object> response = (Map<String, Object>)attributes.get("response");
 
         return OAuthAttributes.builder()
-                .user_name((String) response.get("name"))
-                .email((String) response.get("email"))
+                .id(String.valueOf(response.get("id")))
+                .user_name(String.valueOf(response.get("name")))
+                .email(String.valueOf(response.get("email")))
+                .phone(String.valueOf(response.get("mobile")))
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
                 .build();

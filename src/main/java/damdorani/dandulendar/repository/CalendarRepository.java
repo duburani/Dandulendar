@@ -1,6 +1,5 @@
 package damdorani.dandulendar.repository;
 
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import damdorani.dandulendar.domain.Calendar;
 import damdorani.dandulendar.domain.CalendarDetail;

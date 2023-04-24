@@ -3,25 +3,28 @@ package damdorani.dandulendar.controller;
 import damdorani.dandulendar.domain.Calendar;
 import damdorani.dandulendar.domain.CalendarDetail;
 import damdorani.dandulendar.domain.Group;
+import damdorani.dandulendar.domain.User;
 import damdorani.dandulendar.dto.CalendarDetailForm;
 import damdorani.dandulendar.dto.CalendarForm;
+import damdorani.dandulendar.jwt.JwtTokenProvider;
 import damdorani.dandulendar.service.CalendarService;
 import damdorani.dandulendar.service.GroupService;
+import damdorani.dandulendar.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,8 @@ import java.util.Map;
 public class CalController {
     private final CalendarService calendarService;
     private final GroupService groupService;
+    private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 달력
@@ -38,7 +43,16 @@ public class CalController {
      * @return
      */
     @GetMapping("/calendars")
-    public String calendarList(Model model){
+    public String calendarList(@RequestParam("token") String token, HttpServletRequest request, Model model){
+        if(token != null && jwtTokenProvider.validateToken(token)){
+            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            String userId = jwtTokenProvider.getUserId(token);
+            User user = userService.findUserById(userId);
+
+            model.addAttribute("userInfo", user);
+        }
         return "cal/calendarList";
     }
 

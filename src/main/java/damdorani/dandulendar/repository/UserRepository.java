@@ -12,21 +12,17 @@ import java.util.Optional;
 public class UserRepository {
     private final EntityManager em;
 
-    public Optional<User> findByEmail(String email){
-        return em.createQuery("select u from User u where u.email = :email", User.class)
-                .setParameter("email", email)
+    public Optional<User> findByUserId(String userId){
+        return em.createQuery("select u from User u where u.user_id = :user_id", User.class)
+                .setParameter("user_id", userId)
                 .getResultList()
                 .stream().findAny();
     }
 
-    public User saveUser(User user) {
-        if(user.getUser_id() == null){
-            em.persist(user);
-        }else{
-            em.merge(user);
-        }
-        return user;
+    public User findUserById(String id){
+        return em.find(User.class, id);
     }
-
-
+    public void saveUser(User user) {
+        em.persist(user);
+    }
 }

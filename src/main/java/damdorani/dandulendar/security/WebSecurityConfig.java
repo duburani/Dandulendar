@@ -1,33 +1,36 @@
 package damdorani.dandulendar.security;
 
+import damdorani.dandulendar.jwt.JwtAuthenticationFilter;
+import damdorani.dandulendar.jwt.JwtTokenProvider;
 import damdorani.dandulendar.oauth2.CustomOAuth2UserService;
-import damdorani.dandulendar.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
-    private final UserService userService;
-
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/**").permitAll()
-//                .antMatchers("/api/**").hasRole(Role.USER.name())
                 .anyRequest().authenticated().and()
+
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                        UsernamePasswordAuthenticationFilter.class)
+
                 .oauth2Login()
                 .defaultSuccessUrl("/join")
-                .loginPage("/")
-                .failureUrl("/")
+
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService)
         ;

@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -28,40 +27,22 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-
-        System.out.println("ClientRegistration : " + userRequest.getClientRegistration());
-        System.out.println("AccessToken : " + userRequest.getAccessToken());
-
         OAuth2UserService<OAuth2UserRequest, OAuth2User> service = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = service.loadUser(userRequest); // Oath2 정보를 가져옴
-
-        System.out.println("getAttributes " + oAuth2User.getAttributes());
-
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId(); // 소셜 정보 가져옴
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
 
-        Optional<User> optionalUser = userRepository.findByEmail(attributes.getEmail());
-        User user = null;
+        String userId = registrationId + "_" + attributes.getId();
+        User user = userRepository.findUserById(userId);
 
-        if(optionalUser.isEmpty())
-        {
-            user = User.builder()
-                    .user_id(attributes.getEmail())
-                    .user_name(attributes.getUser_name())
-                    .provider(registrationId)
-                    .role(Role.USER)
-                    .build();
-            userRepository.saveUser(user);
-        }else{
-            user = optionalUser.get();
+        if(user != null){
+            httpSession.setAttribute("user", new SessionUser(user));
         }
 
-        httpSession.setAttribute("user", new SessionUser(user));
-
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRole().getKey())),
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(Role.USER.getKey())),
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey());
     }

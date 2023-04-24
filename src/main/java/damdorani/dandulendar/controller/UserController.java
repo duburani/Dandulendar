@@ -152,27 +152,10 @@ public class UserController {
     @PostMapping("/regist")
     public String regist(@Valid UserForm userForm, BindingResult bindingResult, Model model){
         if(bindingResult.hasErrors()){
-            return "regist";
+            return "user/join";
         }
-
         userService.saveUser(userForm);
-
-        model.addAttribute("calendarForm", new CalendarForm());
-
-        return "cal/calendarList";
-    }
-
-    @GetMapping("/login")
-    public String naverLogin(HttpSession session){
-        
-        String toek = "";
-
-        System.out.println("Session: " + session);
-
-        Enumeration<String> attributeNames = session.getAttributeNames();
-
-
-        return "login/login";
+        return "redirect:/";
     }
 
 
