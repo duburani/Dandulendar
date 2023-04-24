@@ -29,7 +29,7 @@ public class WebSecurityConfig {
                         UsernamePasswordAuthenticationFilter.class)
 
                 .oauth2Login()
-                .defaultSuccessUrl("/join")
+                .defaultSuccessUrl("/userGroup")
 
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService)

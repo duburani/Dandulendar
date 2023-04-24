@@ -15,11 +15,13 @@ public class SessionUser implements Serializable {
         this.user_name = user.getUser_name();
         this.email = user.getEmail();
         this.phone = user.getPhone();
+        this.provider = user.getProvider();
     }
 
     private String user_id;
     private String user_name;
     private String email;
     private String phone;
+    private String provider;
 
 }
