@@ -5,7 +5,7 @@ import damdorani.dandulendar.domain.Group;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import static damdorani.dandulendar.domain.QGroup.group;
+//import static damdorani.dandulendar.domain.QGroup.group;
 
 
 import javax.persistence.EntityManager;
