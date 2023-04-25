@@ -1,5 +1,6 @@
 package damdorani.dandulendar.repository;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import damdorani.dandulendar.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -11,6 +12,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserRepository {
     private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
 
     public Optional<User> findByUserId(String userId){
         return em.createQuery("select u from User u where u.user_id = :user_id", User.class)
@@ -24,5 +26,13 @@ public class UserRepository {
     }
     public void saveUser(User user) {
         em.persist(user);
+    }
+
+    public Optional<User> findUserByCode(String coupleCode, String userId) {
+        return em.createQuery("select u from User u where u.couple_code = :coupleCode and u.user_id <> :userId", User.class)
+                .setParameter("coupleCode", coupleCode)
+                .setParameter("userId", userId)
+                .getResultList()
+                .stream().findAny();
     }
 }

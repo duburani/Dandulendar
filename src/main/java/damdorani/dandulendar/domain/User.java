@@ -28,6 +28,8 @@ public class User extends HashMap<String, Object> {
     private String reg_dt;
     private String mod_dt;
     private String provider;
+    private String couple_code;
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

@@ -16,6 +16,7 @@ public class SessionUser implements Serializable {
         this.email = user.getEmail();
         this.phone = user.getPhone();
         this.provider = user.getProvider();
+        this.couple_code = user.getCouple_code();
     }
 
     private String user_id;
@@ -23,5 +24,6 @@ public class SessionUser implements Serializable {
     private String email;
     private String phone;
     private String provider;
+    private String couple_code;
 
 }

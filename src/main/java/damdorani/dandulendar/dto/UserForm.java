@@ -16,4 +16,5 @@ public class UserForm {
     private String mod_dt;
     private String provider;
     private String code;
+    private String couple_code;
 }

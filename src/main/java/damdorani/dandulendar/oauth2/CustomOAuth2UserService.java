@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @Transactional
@@ -53,6 +54,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .email(attributes.getEmail())
                     .phone(attributes.getPhone())
                     .provider(registrationId)
+                    .couple_code(makeRandomCode())
                     .build();
             userRepository.saveUser(user);
         }
@@ -63,6 +65,24 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(Role.USER.getKey())),
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey());
+    }
+
+    // 랜덤한 커플코드 생성
+    public static String makeRandomCode(){
+        Random rnd =new Random();
+
+        StringBuffer buf =new StringBuffer();
+
+        for(int i=0;i<6;i++){
+            // rnd.nextBoolean() 는 랜덤으로 true, false 를 리턴. true일 시 랜덤 한 소문자를, false 일 시 랜덤 한 숫자를 StringBuffer 에 append 한다.
+            if(rnd.nextBoolean()){
+                buf.append((char)((int)(rnd.nextInt(26))+97));
+            }else{
+                buf.append((rnd.nextInt(10)));
+            }
+        }
+
+        return buf.toString();
     }
 
 }

@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -30,5 +32,15 @@ public class UserService{
 
     public User findUserById(String id){
         return userRepository.findUserById(id);
+    }
+
+    // 커플코드 조회
+    public boolean findUserByCode(String coupleCode, String userId){
+        Optional<User> user = userRepository.findUserByCode(coupleCode, userId);
+        if(user == null){
+            return false;
+        }else{
+            return true;
+        }
     }
 }
