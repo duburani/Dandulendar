@@ -3,9 +3,7 @@ package damdorani.dandulendar.oauth2;
 import damdorani.dandulendar.domain.Role;
 import damdorani.dandulendar.domain.User;
 import damdorani.dandulendar.dto.SessionUser;
-import damdorani.dandulendar.dto.UserForm;
 import damdorani.dandulendar.repository.UserRepository;
-import damdorani.dandulendar.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -54,7 +52,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .email(attributes.getEmail())
                     .phone(attributes.getPhone())
                     .provider(registrationId)
-                    .couple_code(makeRandomCode())
+                    .couple_code(this.makeCoupleCode())
+                    .role(Role.USER)
                     .build();
             userRepository.saveUser(user);
         }
@@ -67,7 +66,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 attributes.getNameAttributeKey());
     }
 
-    // 랜덤한 커플코드 생성
+    // 유저 클래스에 없는 랜덤코드 확인 후 리턴
+    public String makeCoupleCode(){
+        String coupleCode;
+        while(true){
+            coupleCode = this.makeRandomCode();
+            Optional<User> userByCode = userRepository.findUserByCode(coupleCode);
+            if(userByCode.isEmpty())
+                break;
+        }
+        return coupleCode;
+    }
+
+    // 랜덤코드 생성
     public static String makeRandomCode(){
         Random rnd =new Random();
 

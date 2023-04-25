@@ -8,6 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,16 +22,20 @@ import java.util.List;
 public class User extends HashMap<String, Object> {
     @Id
     private String user_id;
-    private String password;
     private String user_name;
-    private String nickname;
     private String phone;
     private String email;
-    private String reg_dt;
-    private String mod_dt;
     private String provider;
     private String couple_code;
 
+    private LocalDateTime reg_dt;
+    private LocalDateTime mod_dt;
+
+    @PrePersist
+    public void createdAt(){
+        this.reg_dt = LocalDateTime.now();
+        this.mod_dt = LocalDateTime.now();
+    }
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

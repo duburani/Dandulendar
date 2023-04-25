@@ -3,13 +3,8 @@ package damdorani.dandulendar.dto;
 import damdorani.dandulendar.domain.User;
 import lombok.Getter;
 
-import java.io.Serializable;
-
 @Getter
-public class SessionUser implements Serializable {
-    SessionUser() {
-    }
-
+public class SessionUser {
     public SessionUser(User user) {
         this.user_id = user.getUser_id();
         this.user_name = user.getUser_name();
@@ -25,5 +20,4 @@ public class SessionUser implements Serializable {
     private String phone;
     private String provider;
     private String couple_code;
-
 }

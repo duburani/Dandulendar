@@ -1,6 +1,5 @@
 package damdorani.dandulendar.controller;
 
-import damdorani.dandulendar.domain.User;
 import damdorani.dandulendar.domain.UserGroup;
 import damdorani.dandulendar.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +20,9 @@ import javax.validation.Valid;
 public class UserController {
     private final UserService userService;
 
-    // 회원 로그아웃
-
     // 그룹 조회
     @GetMapping("/userGroup")
     public String userGroup(@RequestParam(required = false, name = "coupleCode") String coupleCode, HttpServletRequest request, Model model){
-        // coupleCode 가 없으면 그냥 회원가입 성공해서 들어온 사람으로 취급
         HttpSession session = request.getSession();
 
         Object objUser = session.getAttribute("user");
@@ -34,7 +30,7 @@ public class UserController {
             return "redirect:/";
         }
 
-        model.addAttribute("userInfo", (User) objUser);
+        model.addAttribute("userInfo", objUser);
         model.addAttribute("coupleCode", coupleCode);
         return "user/userGroup";
     }

@@ -28,10 +28,9 @@ public class UserRepository {
         em.persist(user);
     }
 
-    public Optional<User> findUserByCode(String coupleCode, String userId) {
-        return em.createQuery("select u from User u where u.couple_code = :coupleCode and u.user_id <> :userId", User.class)
+    public Optional<User> findUserByCode(String coupleCode) {
+        return em.createQuery("select u from User u where u.couple_code = :coupleCode", User.class)
                 .setParameter("coupleCode", coupleCode)
-                .setParameter("userId", userId)
                 .getResultList()
                 .stream().findAny();
     }
