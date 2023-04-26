@@ -79,7 +79,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     // 랜덤코드 생성
-    public static String makeRandomCode(){
+    public String makeRandomCode(){
         Random rnd =new Random();
 
         StringBuffer buf =new StringBuffer();
