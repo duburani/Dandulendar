@@ -3,8 +3,10 @@ package damdorani.dandulendar.controller;
 import damdorani.dandulendar.domain.Calendar;
 import damdorani.dandulendar.domain.CalendarDetail;
 import damdorani.dandulendar.domain.Group;
+import damdorani.dandulendar.domain.User;
 import damdorani.dandulendar.dto.CalendarDetailForm;
 import damdorani.dandulendar.dto.CalendarForm;
+import damdorani.dandulendar.dto.SessionUser;
 import damdorani.dandulendar.jwt.JwtTokenProvider;
 import damdorani.dandulendar.service.CalendarService;
 import damdorani.dandulendar.service.GroupService;
@@ -47,7 +49,8 @@ public class CalController {
 
 
         HttpSession session = request.getSession();
-        model.addAttribute("userInfo", session.getAttribute("user"));
+//        model.addAttribute("userInfo", session.getAttribute("user"));
+        model.addAttribute("userInfo", new SessionUser(User.builder().build()));
 
         return "cal/calendarList";
     }

@@ -4,11 +4,52 @@
     <head>
         <meta charset="utf-8">
         <th:block th:replace="fragments/config::configFragment"></th:block>
+
+        <style>
+
+            /*div#wrap { background:#ddd; }*/
+            /*header#header { background:#fdd; }*/
+            /*nav#nav { background:#dfd; }*/
+            /*section#container { background:#ddf; }*/
+            /*div.content { background:#eee; }*/
+            /*aside#aside { background:#fef; }*/
+            /*footer#footer { background:#ffe; }*/
+
+            /*div#warp, header#header, nav#nav,*/
+            /*section#container, div.content, aside#aside,*/
+            /*footer#footer { padding:10px; }*/
+
+            nav#nav ul { margin:0; padding:0; list-style:none; }
+            nav#nav ul li { background:#eee; padding:10px; display:inline-block; }
+
+            div.content { width: 80%; float: right;}
+            aside#aside { width: 20%; float: left;}
+
+            section#container::after { content:""; display:block; clear:both; }
+
+            @media screen and (max-width: 990px) {
+                div.content,
+                aside#aside { width:calc(100% - 20px); float:none; }
+            }
+
+        </style>
     </head>
 
-    <body id="sideBody" class="sideBody">
-        <nav th:replace="fragments/navigation::navigationFragment"></nav>
-        <div layout:fragment="content" class="container-fluid p-0"></div>
-    </body>
+<!--    <body>-->
+<!--        <nav th:replace="fragments/navigation::navigationFragment"></nav>-->
+<!--        <div layout:fragment="content" class="container-fluid p-0"></div>-->
+<!--    </body>-->
 
+    <body>
+        <div id="wrap">
+            <section id="container">
+                <aside id="aside" th:replace="fragments/leftSide::leftSideFragment">
+
+                </aside>
+                <div layout:fragment="content" class="content">
+
+                </div>
+            </section>
+        </div>
+    </body>
 </html>

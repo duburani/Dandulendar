@@ -132,7 +132,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-        <button type="button" id="updateCalDtlBtn" class="btn btn-primary">저장</button>
+        <button type="button" id="updateCalDtlBtn" class="btn btn-pink">저장</button>
         <button type="button" id="deleteCalDtlBtn" class="btn btn-danger" th:unless="${#strings.equals(calendarDetailForm.cal_dtl_id, 0)}" th:onclick="'deleteCalDetail(' + ${calendarDetailForm.cal_dtl_id} + ');'">삭제</button>
       </div>
     </div>

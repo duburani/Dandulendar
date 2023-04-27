@@ -3,11 +3,11 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
-    <link rel="stylesheet" type="text/css" href="/css/jquery.timepicker.css" />
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap-datepicker.css" />
-    <link rel="stylesheet" type="application/octet-stream" href="/css/bootstrap-datepicker.css.map" />
+    <link rel="stylesheet" type="text/css" href="/css/jquery.timepicker.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-datepicker.css"/>
+    <link rel="stylesheet" type="application/octet-stream" href="/css/bootstrap-datepicker.css.map"/>
 
     <script type="text/javascript" src="/js/bootstrap-datepicker.js"></script>
     <script type="text/javascript" src="/js/jquery.timepicker.js"></script>
@@ -23,9 +23,9 @@
                 headerToolbar: {
                     right: 'addEventButton prev,next today'
                 }
-                ,editable: true
-                ,selectable: true
-                ,events: calendarDetailList()
+                , editable: true
+                , selectable: true
+                , events: calendarDetailList()
                 // ,events:
                 //     [
                 //         {
@@ -67,28 +67,31 @@
                 //             "allDay" : true
                 //         }
                 //     ]
-                ,customButtons:{
-                    addEventButton : {
+                , customButtons: {
+                    addEventButton: {
                         text: "달력추가",
-                        click : function(){
+                        click: function () {
                             setCal();
                             $("#calendarCateModal").modal('show');
                         }
                     }
                 }
-                ,dateClick : function (info) {
+                , dateClick: function (info) {
                     setCalDtl('I', info);
                     // $("#calendarDetailModal").modal('show');
                 }
-                ,eventClick : function (info) {
+                , eventClick: function (info) {
                     setCalDtl('U', info);
                     // showCalendarDetailView(info);
                 }
-                ,dayMaxEventRows : 4
-                ,editable: false
-                ,droppable: false
-                ,dayPopoverFormat: { year: 'numeric', month: 'long', day: 'numeric' }
-                ,contentHeight : 600
+                , dayMaxEventRows: 4
+                , editable: false
+                , droppable: false
+                , dayPopoverFormat: {year: 'numeric', month: 'long', day: 'numeric'}
+                , height: $(window).height()*0.83
+                , contentHeight: $(window).height()*0.83
+                , aspectRatio: 1.09
+                // ,contentHeight : 600
             });
 
             calendar.render();
@@ -96,29 +99,29 @@
 
             var calendarForm = document.calendarForm;
 
-            $("#updateCalBtn").click(function(){
+            $("#updateCalBtn").click(function () {
                 calendarForm.submit();
             });
 
             // 기념일 여부
-            $("#memorial_ch").change(function(){
-                if($("#memorial_ch").is(":checked")){
+            $("#memorial_ch").change(function () {
+                if ($("#memorial_ch").is(":checked")) {
                     $("#memorial_yn").val("Y");
-                }else{
+                } else {
                     $("#memorial_yn").val("N");
                 }
             });
         });
 
         // 달력 셀에 일정 뿌리기
-        function calendarDetailList(){
+        function calendarDetailList() {
             let result = "";
             $.ajax({
-                url : "/calendars/detail"
-                ,method : "GET"
-                ,async : false
-                ,dataType : "JSON"
-                ,success : function (data){
+                url: "/calendars/detail"
+                , method: "GET"
+                , async: false
+                , dataType: "JSON"
+                , success: function (data) {
                     result = data;
                 }
             });
@@ -126,13 +129,13 @@
         }
 
         // 달력 셋팅
-        function setCal(){
+        function setCal() {
             $.ajax({
-                url : "/calendars/new"
-                ,method: "GET"
-                ,async: false
+                url: "/calendars/new"
+                , method: "GET"
+                , async: false
                 // ,data : data
-                ,success : function (data){
+                , success: function (data) {
                     $("#calendarCateModal").html(data);
                     $("#calendarCateModal").modal('show');
                 }
@@ -140,19 +143,25 @@
         }
 
         // 달력 일정 상세 조회
-        function setCalDtl(type, info){
+        function setCalDtl(type, info) {
             let calId = type == 'I' ? "" : info.event.id;
             let dateStr = type == 'I' ? info.dateStr : "";
-            let data = {"calDtlId" : calId, "dateStr" : dateStr};
+            let data = {"calDtlId": calId, "dateStr": dateStr};
             $.ajax({
-                url : "/calendars/detail/new"
-                ,method: "GET"
-                ,async: false
-                ,data : data
-                ,success : function (data){
+                url: "/calendars/detail/new"
+                , method: "GET"
+                , async: false
+                , data: data
+                , success: function (data) {
                     $("#calendarDetailModal").html(data);
                     $("#calendarDetailModal").modal('show');
                 }
+            });
+
+
+            $('table.fc-scrollgrid tbody tr:not(.fc-minor)').each(function(){
+                $(this).find("th:first-child").css("font-size", "12px").attr('rowSpan',4); //
+                $(this).nextUntil("tr:not(.fc-minor)","tr.fc-minor").find("th:first-child").remove();
             });
         }
     </script>
@@ -160,33 +169,39 @@
 
         #calendarBody {
             /*margin: 40px 10px;*/
-            margin-top: 40px;
-            padding: 0;
-            font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+            /*margin-top: 40px;*/
+            padding: 3rem;
+            font-family: neo-reg, Arial, Helvetica Neue, Helvetica, sans-serif;
             font-size: 14px;
         }
 
         #calendar {
             /*max-width: 1100px;*/
-            max-width: 60rem;
+            /*max-width: 60rem;*/
             margin: 0 auto;
         }
 
+        .fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
+            min-height: 3em
+        }
     </style>
 </head>
 <body>
-    <div layout:fragment="content" id="calendarBody">
-        <div>
-            <div class="modal fade" id="calendarCateModal" tabindex="-1" aria-labelledby="calendarCateModalLabel" aria-hidden="true"></div>
+<div layout:fragment="content" id="calendarBody">
+    <div>
+        <div class="modal fade" id="calendarCateModal" tabindex="-1" aria-labelledby="calendarCateModalLabel"
+             aria-hidden="true"></div>
 
-            <div class="modal fade" id="calendarDetailModal" tabindex="-1" aria-labelledby="calendarDetailModalLabel" aria-hidden="true"></div>
+        <div class="modal fade" id="calendarDetailModal" tabindex="-1" aria-labelledby="calendarDetailModalLabel"
+             aria-hidden="true"></div>
 
-            <div class="modal fade" id="calendarDetailViewModal" tabindex="-1" aria-labelledby="calendarDetailModalViewLabel" aria-hidden="true"></div>
-        </div>
-
-
-        <!-- 캘린더 -->
-        <div id='calendar'></div>
+        <div class="modal fade" id="calendarDetailViewModal" tabindex="-1"
+             aria-labelledby="calendarDetailModalViewLabel" aria-hidden="true"></div>
     </div>
+
+
+    <!-- 캘린더 -->
+    <div id='calendar'></div>
+</div>
 </body>
 </html>
