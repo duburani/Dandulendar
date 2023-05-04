@@ -17,11 +17,13 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CalendarService {
+    private final GroupRepository groupRepository;
     private final CalendarRepository calendarRepository;
 
     // 달력 생성
     @Transactional
-    public void craete(CalendarForm calendarForm, Group group){
+    public void craete(CalendarForm calendarForm){
+        Group group = groupRepository.findGroup(calendarForm.getGroup_id());
         Calendar calendar = new Calendar(calendarForm.getCal_title(), calendarForm.getColor(), calendarForm.getMemorial_yn(), group);
         calendarRepository.saveCalendar(calendar);
     }
@@ -37,9 +39,18 @@ public class CalendarService {
     }
 
     // 달력 삭제
-
+    @Transactional
+    public void deleteCalendar(int calId) {
+        Calendar calendar = calendarRepository.findCalendar(calId);
+        calendar.updateDelYn("Y");
+    }
 
     // 달력 수정
+    @Transactional
+    public void update(CalendarForm calendarForm){
+        Calendar calendar = calendarRepository.findCalendar(calendarForm.getCal_id());
+        calendar.updateCal(calendarForm);
+    }
 
 
 
@@ -96,6 +107,5 @@ public class CalendarService {
         CalendarDetail calendarDetail = calendarRepository.findCalendarDetail(cal_dtl_id);
         calendarDetail.updateDelYn("Y");
     }
-
 
 }

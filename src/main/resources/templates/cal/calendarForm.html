@@ -6,14 +6,55 @@
   <script>
 
     // 그룹 색 지정
+    function selectGroupColor(obj, color) {
+      $("#cal-color .list-group-item").removeClass("active");
+      $(obj).addClass("active");
+      $("#color").val(color);
+    }
 
-    function selectGroupColor(param) {
-      console.log(param.dataset.value);
-      $("#color").val(param.dataset.value);
+    // 수정할 달력 선택
+    function selectGroup(calendar){
+      let color = calendar.dataset.color;
+      let meYn = calendar.dataset.meYn;
+
+      $("#cal_id").val(calendar.dataset.id);
+      $("#color").val(color);
+      $("#cal-color .list-group-item").removeClass("active");
+      $("#cal-color .list-group-item-" + color).addClass("active");
+      $("#cal_title").val(calendar.dataset.title);
+      $("#memorial_ch").prop("checked", meYn == "Y" ? true : false);
+      $("#calendarForm #_method").val("PUT");
+
+      $("#deleteCalBtn").show();
     }
 
     $(function () {
 
+      // 기념일 여부
+      $("#memorial_ch").change(function () {
+        if ($("#memorial_ch").is(":checked")) {
+          $("#memorial_yn").val("Y");
+        } else {
+          $("#memorial_yn").val("N");
+        }
+      });
+
+
+      var calendarForm = document.calendarForm;
+      console.log(calendarForm);
+      // 저장
+      $("#updateCalBtn").click(function () {
+        // $("#calendarForm").attr("action", "/calendars/new");
+        calendarForm.submit();
+      });
+
+      // 달력 삭제
+      $("#deleteCalBtn").click(function (){
+        alert("[" + $("#cal_title").val() + "] 달력과 관련된 모든 일정이 삭제됩니다.");
+        $("#calendarForm").attr("action", "/calendars/" + $("#cal_id").val() * 1);
+
+        calendarForm.submit();
+      });
     });
   </script>
 </head>
@@ -25,22 +66,24 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="calendarForm" name="calendarForm" method="post" action="/calendars/new">
+        <form id="calendarForm" name="calendarForm" method="POST" action="/calendars/new">
+          <input type="text" id="_method" name="_method">
+          <input type="text" id="cal_id" name="cal_id">
           <div class="mb-3">
-            <label class="col-form-label">내 달력</label>
             <ul class="list-group">
-              <li class="list-group-item" th:each="cd : ${calendarList}" th:style="'background-color:' + ${cd.color} + ';'"  th:value="${cd.cal_id}" th:text="${cd.cal_title}"></li>
+              <li class="d-flex list-group-item list-group-item-action" th:each="cd : ${calendarList}" onclick="selectGroup(this)" th:data-id="${cd.cal_id}" th:data-color="${cd.color}" th:data-title="${cd.cal_title}" th:data-meyn="${cd.memorial_yn}">
+                <div class="ms-2 me-auto" th:text="${cd.cal_title}"></div>
+                <span class="badge rounded-pill" th:classappend="${'bg-'+cd.color}">14</span>
+              </li>
             </ul>
           </div>
           <div class="mb-3">
             <label class="col-form-label">달력 색상</label>
-            <ul class="list-group list-group-horizontal">
-              <li><a href="javascript:void(0);" onclick="selectGroupColor(this)" class="list-group-item list-group-item-action list-group-item-primary">green</a></li>
-              <li><a href="javascript:void(0);" onclick="selectGroupColor(this)" class="list-group-item list-group-item-action list-group-item-light">gray</a></li>
-              <li><a href="javascript:void(0);" onclick="selectGroupColor(this)" class="list-group-item list-group-item-action list-group-item-danger">red</a></li>
-              <li><a href="javascript:void(0);" onclick="selectGroupColor(this)" class="list-group-item list-group-item-action list-group-item-warning">yellow</a></li>
-              <li><a href="javascript:void(0);" onclick="selectGroupColor(this)" class="list-group-item list-group-item-action list-group-item-info">blue</a></li>
-              <li><a href="javascript:void(0);" onclick="selectGroupColor(this)" class="list-group-item list-group-item-action list-group-item-dark">dark-gray</a></li>
+            <input type="text" id="color" name="color">
+            <ul class="list-group list-group-horizontal" id="cal-color">
+              <li th:each="color : ${T(damdorani.dandulendar.domain.ColorCode).values()}">
+                <a href="javascript:void(0);" th:onclick="selectGroupColor(this, [[${color.getCode_id()}]] )" class="list-group-item list-group-item-action" th:classappend="${'list-group-item-'+color.getCode_id()}" th:text="${color.getCode_name()}"></a>
+              </li>
             </ul>
           </div>
           <div class="mb-3">
@@ -50,7 +93,7 @@
           <div class="mb-3">
             <div class="form-check form-switch">
               <label class="memorial-yn">기념일</label>
-              <input type="hidden" id="memorial_yn" name="memorial_yn" value="N">
+              <input type="text" id="memorial_yn" name="memorial_yn" value="N">
               <input class="form-check-input" type="checkbox" id="memorial_ch">
             </div>
           </div>
@@ -60,6 +103,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
         <button type="button" id="updateCalBtn" class="btn btn-pink">저장</button>
+        <button type="button" id="deleteCalBtn" class="btn btn-danger" style="display: none">삭제</button>
       </div>
     </div>
   </div>

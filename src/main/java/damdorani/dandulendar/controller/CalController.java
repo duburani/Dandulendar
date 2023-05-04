@@ -80,9 +80,36 @@ public class CalController {
             return "cal/calendarList";
         }
 
-        Group group = groupService.findGroup(calendarForm.getGroup_id());
-        calendarService.craete(calendarForm, group);
+        calendarService.craete(calendarForm);
 
+        return "redirect:/calendars";
+    }
+
+    /**
+     * 달력 수정
+     * @param calendarForm
+     * @param bindingResult
+     * @return
+     */
+    @PutMapping("/calendars/new")
+    public String updateCal(@Valid CalendarForm calendarForm, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "cal/calendarList";
+        }
+
+        calendarService.update(calendarForm);
+
+        return "redirect:/calendars";
+    }
+
+    /**
+     * 달력 일정 상세 삭제
+     * @param calId
+     * @return
+     */
+    @PutMapping("/calendars/{calId}")
+    public String deleteCalendar(@PathVariable int calId){
+        calendarService.deleteCalendar(calId);
         return "redirect:/calendars";
     }
 

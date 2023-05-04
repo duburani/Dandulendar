@@ -29,6 +29,7 @@ public class CalendarRepository {
         return queryFactory
                 .selectDistinct(calendar)
                 .from(calendar)
+                .where(calendar.del_yn.eq("N"))
                 .fetch();
 //        return em.createQuery("select c from Calendar c where del_yn = 'N'", Calendar.class).getResultList();
     }
@@ -50,7 +51,6 @@ public class CalendarRepository {
                 .fetchJoin()
                 .fetch();
     }
-
 
 
 }

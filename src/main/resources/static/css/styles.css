@@ -4852,6 +4852,7 @@ textarea.form-control-lg {
   padding-left: 0;
   margin-bottom: 0;
   border-radius: var(--bs-list-group-border-radius);
+  list-style: none;
 }
 
 .list-group-numbered {

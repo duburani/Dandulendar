@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://duburani.csiv33i8vvhw.us-east-2.rds.amazonaws.com:3306/damdorani?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://duburani.csiv33i8vvhw.us-east-2.rds.amazonaws.com:3306/damdorani?serverTimezone=Asia/Seoul&useSSL=false&autoReconnect=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: admin
     password: ekaehfksl0405

@@ -60,7 +60,6 @@
     function deleteCalDetail(calDtlId){
       $("#calendarDetailForm #_method").val("PUT");
       $("#calendarDetailForm").attr("action", "/calendars/detail/" + calDtlId);
-      console.log($("#calendarDetailForm"));
 
       $("#calendarDetailForm").submit();
     }
