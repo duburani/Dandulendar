@@ -19,7 +19,7 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
-public class User extends HashMap<String, Object> {
+public class User {
     @Id
     private String user_id;
     private String user_name;

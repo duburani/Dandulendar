@@ -19,4 +19,8 @@ public class GroupRepository {
     public Group findGroup(int id) {
         return em.find(Group.class, id);
     }
+
+    public void saveGroup(Group group) {
+        em.persist(group);
+    }
 }

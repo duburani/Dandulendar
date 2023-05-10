@@ -5,10 +5,26 @@
     <meta charset="utf-8">
     <th:block th:replace="fragments/config::configFragment"></th:block>
     <style>
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /*background: #fff4f8;*/
+            background-image: url("/assets/img/bg2.png");
+            background-size: contain;
+        }
+
+        .content {
+            padding: 3rem;
+            border-radius: 1rem;
+            /*background: #ffe8ee;*/
+        }
     </style>
 </head>
 <body>
 <div class="wrapper bg-light-pink">
+    <!--    <img src="assets/img/img.png">-->
     <div class="content text-center bg-reg-pink">
         <div class="container d-flex align-items-center flex-column ">
             <!-- Masthead Avatar Image-->

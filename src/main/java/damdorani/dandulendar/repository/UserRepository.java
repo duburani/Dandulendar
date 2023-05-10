@@ -2,6 +2,7 @@ package damdorani.dandulendar.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import damdorani.dandulendar.domain.User;
+import damdorani.dandulendar.domain.UserGroup;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -33,5 +34,9 @@ public class UserRepository {
                 .setParameter("coupleCode", coupleCode)
                 .getResultList()
                 .stream().findAny();
+    }
+
+    public void saveUserGroup(UserGroup userGroup) {
+        em.persist(userGroup);
     }
 }

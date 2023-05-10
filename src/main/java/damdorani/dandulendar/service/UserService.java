@@ -1,17 +1,24 @@
 package damdorani.dandulendar.service;
 
+import damdorani.dandulendar.domain.Group;
 import damdorani.dandulendar.domain.User;
+import damdorani.dandulendar.domain.UserGroup;
 import damdorani.dandulendar.dto.UserForm;
+import damdorani.dandulendar.dto.UserGroupForm;
+import damdorani.dandulendar.repository.GroupRepository;
 import damdorani.dandulendar.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService{
     private final UserRepository userRepository;
+    private final GroupRepository groupRepository;
 
     @Transactional
     public void saveUser(UserForm userForm){
@@ -28,4 +35,7 @@ public class UserService{
     public User findUserById(String id){
         return userRepository.findUserById(id);
     }
+
+
+
 }

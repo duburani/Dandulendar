@@ -1,15 +1,17 @@
 package damdorani.dandulendar.controller;
 
+import damdorani.dandulendar.domain.User;
 import damdorani.dandulendar.domain.UserGroup;
+import damdorani.dandulendar.dto.GroupForm;
+import damdorani.dandulendar.dto.UserForm;
+import damdorani.dandulendar.dto.UserGroupForm;
+import damdorani.dandulendar.service.GroupService;
 import damdorani.dandulendar.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -20,6 +22,7 @@ import javax.validation.Valid;
 @Slf4j
 public class UserController {
     private final UserService userService;
+    private final GroupService groupService;
 
     // 그룹 조회
     @GetMapping("/userGroup")
@@ -38,8 +41,16 @@ public class UserController {
 
     // 그룹 생성
     @PostMapping("/userGroup")
-    public String userGroup(@Valid UserGroup userGroup){
-        return "";
+    public String userGroup(@RequestBody GroupForm groupForm, UserGroupForm userGroupForm, Model model){
+
+        // saveGroup
+        model.addAttribute("groupForm", groupForm);
+        groupService.saveGroup(groupForm);
+
+        // saveUserGroup
+        groupService.saveUserGroup(userGroupForm);
+
+        return "redirect:/";
     }
 
     // 그룹 삭제
