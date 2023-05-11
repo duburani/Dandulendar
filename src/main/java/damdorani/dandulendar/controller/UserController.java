@@ -41,16 +41,17 @@ public class UserController {
 
     // 그룹 생성
     @PostMapping("/userGroup")
-    public String userGroup(@RequestBody GroupForm groupForm, UserGroupForm userGroupForm, Model model){
+    public String userGroup(@Valid GroupForm groupForm, UserGroupForm userGroupForm, Model model){
 
         // saveGroup
+        groupForm.setMemorial_date(groupForm.getMemorial_date().replace("-",""));
         model.addAttribute("groupForm", groupForm);
-        groupService.saveGroup(groupForm);
+        int groupId = groupService.saveGroup(groupForm);
 
         // saveUserGroup
-        groupService.saveUserGroup(userGroupForm);
+        groupService.saveUserGroup(userGroupForm, groupId);
 
-        return "redirect:/";
+        return "redirect:/calendars";
     }
 
     // 그룹 삭제

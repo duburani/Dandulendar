@@ -49,9 +49,16 @@
             //console.log( document.groupForm[0] );
             //var memorialDate = document.getElementById('memorial_date');
             //console.log(new Date(document.getElementById('memorial_date')));
-            var memorial_date = new Date($('#memorial_date').val());
+
+            //var memorial_date = $('#memorial_date').val();
+            //memorial_date = $('#memorial_date').val().replace(/-/g,'');
+
+
+           /* var memorial_date = new Date($('#memorial_date').val().replace(/-/g,''));
+            $(`#memorial_date`).val(memorial_date);*/
 
             document.groupForm.submit();
+            // document.getElementById("groupForm").su
         }
 
         $(function() {
@@ -81,7 +88,6 @@
                 language : "ko"	//달력의 언어 선택, 그에 맞는 js로 교체해줘야한다.
 
             });//datepicker end
-
 
             let coupleLink = window.location.href + "?coupleCode=" + $("#couple_code").val();
             $("#coupleLink").val(coupleLink);
@@ -147,7 +153,7 @@
                                 <!--확인-->
                                 <!--확인-->
                                 <!--확인-->
-                                <form action="/calendars" id="groupFrom" name="groupForm" method="post">
+                                <form action="/userGroup" id="groupForm" name="groupForm" method="post">
                                     <input type="hidden" id="user_id" name="user_id" th:value="${userInfo.user_id}">
                                     <input type="hidden" id="couple_code" name="couple_code" th:value="${userInfo.couple_code}">
                                     <div class="modal-header">

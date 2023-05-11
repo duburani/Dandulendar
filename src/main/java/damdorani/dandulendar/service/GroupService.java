@@ -27,19 +27,20 @@ public class GroupService {
         return groupRepository.findGroup(id);
     }
 
-    public void saveGroup(GroupForm groupForm){
+    @Transactional
+    public int saveGroup(GroupForm groupForm){
         Group group = Group.builder()
                 .memorial_date(groupForm.getMemorial_date())
                 .build();
-        groupRepository.saveGroup(group);
+        return groupRepository.saveGroup(group);
     }
 
     @Transactional
-    public void saveUserGroup(UserGroupForm userGroupForm){
+    public void saveUserGroup(UserGroupForm userGroupForm, int groupId){
 
         // user -> group -> userGroup
         Optional<User> user = userRepository.findByUserId(userGroupForm.getUser_id());
-        Group group = groupRepository.findGroup(userGroupForm.getGroup_id());
+        Group group = groupRepository.findGroup(groupId);
 
         UserGroup userGroup = UserGroup.builder()
                 .user(user.get())

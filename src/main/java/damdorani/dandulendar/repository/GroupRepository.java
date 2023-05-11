@@ -20,7 +20,8 @@ public class GroupRepository {
         return em.find(Group.class, id);
     }
 
-    public void saveGroup(Group group) {
+    public int saveGroup(Group group) {
         em.persist(group);
+        return group.getGroup_id();
     }
 }
