@@ -7,10 +7,13 @@ import damdorani.dandulendar.dto.CalendarDetailForm;
 import damdorani.dandulendar.dto.CalendarForm;
 import damdorani.dandulendar.repository.CalendarRepository;
 import damdorani.dandulendar.repository.GroupRepository;
+import damdorani.dandulendar.util.CommonUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -24,7 +27,12 @@ public class CalendarService {
     @Transactional
     public void craete(CalendarForm calendarForm){
         Group group = groupRepository.findGroup(calendarForm.getGroup_id());
-        Calendar calendar = new Calendar(calendarForm.getCal_title(), calendarForm.getColor(), calendarForm.getMemorial_yn(), group);
+        Calendar calendar = Calendar.builder()
+                .cal_title(calendarForm.getCal_title())
+                .color(calendarForm.getColor())
+                .memorial_yn(calendarForm.getMemorial_yn())
+                .group(group)
+                .build();
         calendarRepository.saveCalendar(calendar);
     }
 
@@ -73,10 +81,12 @@ public class CalendarService {
                 .start_time(calendarDetailForm.getStart_time())
                 .end_date(calendarDetailForm.getEnd_date())
                 .end_time(calendarDetailForm.getEnd_time())
+                .start_full_date(CommonUtils.convertTime(calendarDetailForm.getStart_date(), calendarDetailForm.getStart_time()))
+                .end_full_date(CommonUtils.convertTime(calendarDetailForm.getEnd_date(), calendarDetailForm.getEnd_time()))
                 .repeat_yn(calendarDetailForm.getRepeat_yn())
                 .allday_yn(calendarDetailForm.getAllday_yn())
-                .del_yn("N")
                 .calendar(calendar)
+//                .del_yn("N")
                 .build();
         calendarRepository.saveCalendarDetail(calendarDetail);
     }
@@ -89,15 +99,14 @@ public class CalendarService {
         calendarDetail.updateCalendarDetail(calendarDetailForm, calendar);
     }
 
-
     // 달력 상세 조회
     public CalendarDetail findCalendarDetail(int cal_dtl_id){
         return calendarRepository.findCalendarDetail(cal_dtl_id);
     }
 
     // 달력 일정 상세 목록 조회
-    public List<Calendar> findCalendarDetailList(){
-        List<Calendar> calendarDetailList = calendarRepository.findCalendarDetailList();
+    public List<Calendar> findCalendarDetailList(LocalDateTime startStr, LocalDateTime endStr){
+        List<Calendar> calendarDetailList = calendarRepository.findCalendarDetailList(startStr, endStr);
         return calendarDetailList;
     }
 

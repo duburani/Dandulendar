@@ -2,18 +2,17 @@ package damdorani.dandulendar.controller;
 
 import damdorani.dandulendar.domain.Calendar;
 import damdorani.dandulendar.domain.CalendarDetail;
-import damdorani.dandulendar.domain.Group;
+import damdorani.dandulendar.domain.ColorCode;
 import damdorani.dandulendar.domain.User;
 import damdorani.dandulendar.dto.CalendarDetailForm;
 import damdorani.dandulendar.dto.CalendarForm;
 import damdorani.dandulendar.dto.SessionUser;
-import damdorani.dandulendar.jwt.JwtTokenProvider;
 import damdorani.dandulendar.service.CalendarService;
 import damdorani.dandulendar.service.GroupService;
-import damdorani.dandulendar.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,10 +23,13 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 @Controller
 @RequiredArgsConstructor
@@ -138,14 +140,17 @@ public class CalController {
      */
     @GetMapping("/calendars/detail")
     @ResponseBody
-    public List<Map<String, Object>> calendarsDetailList() throws Exception{
+    public List<Map<String, Object>> calendarsDetailList(@RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime startStr
+                                                        , @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime endStr) throws Exception
+
+    {
         JSONArray jsonArr = new JSONArray();
 
         HashMap<String, Object> hash = new HashMap<>();
 
-        List<Calendar> calendarDetailList = calendarService.findCalendarDetailList();
+        List<Calendar> calendarDetailList = calendarService.findCalendarDetailList(startStr, endStr);
         for(Calendar calendar : calendarDetailList){
-            hash.put("color", calendar.getColor());
+            hash.put("color", ColorCode.valueOf(calendar.getColor().toUpperCase()).getRgb_color());
             hash.put("cal_title", calendar.getCal_title());
             for(CalendarDetail calendarDetail : calendar.getCalendars()){
                 hash.put("id", calendarDetail.getCal_dtl_id());

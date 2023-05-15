@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -42,15 +44,17 @@ public class CalendarRepository {
         return em.find(CalendarDetail.class, calDtlId);
     }
 
-    public List<Calendar> findCalendarDetailList() {
+    public List<Calendar> findCalendarDetailList(LocalDateTime startStr, LocalDateTime endStr) {
         return queryFactory
                 .selectDistinct(calendar)
                 .from(calendar)
                 .join(calendar.calendars, calendarDetail)
                 .where(calendarDetail.del_yn.eq("N"))
+
+                .where(calendarDetail.start_full_date.between(startStr, endStr))
+                .where(calendarDetail.end_full_date.between(startStr, endStr))
+
                 .fetchJoin()
                 .fetch();
     }
-
-
 }

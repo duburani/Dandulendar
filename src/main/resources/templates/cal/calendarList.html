@@ -25,7 +25,9 @@
                 }
                 , editable: true
                 , selectable: true
-                , events: calendarDetailList()
+                , events: function (info, successCallback) {
+                    successCallback(calendarDetailList(info));
+                }
                 , customButtons: {
                     addEventButton: {
                         text: "달력추가",
@@ -64,13 +66,18 @@
         });
 
         // 달력 셀에 일정 뿌리기
-        function calendarDetailList() {
+        function calendarDetailList(info) {
+            let data = {"startStr":info.startStr, "endStr":info.endStr};
+
+            console.log(data);
+
             let result = "";
             $.ajax({
                 url: "/calendars/detail"
                 , method: "GET"
                 , async: false
                 , dataType: "JSON"
+                , data: data
                 , success: function (data) {
                     result = data;
                 }
@@ -110,7 +117,7 @@
 
 
             $('table.fc-scrollgrid tbody tr:not(.fc-minor)').each(function(){
-                $(this).find("th:first-child").css("font-size", "12px").attr('rowSpan',4); //
+                $(this).find("th:first-child").css("font-size", "12px").attr('rowSpan',4);
                 $(this).nextUntil("tr:not(.fc-minor)","tr.fc-minor").find("th:first-child").remove();
             });
         }
@@ -148,7 +155,6 @@
         <div class="modal fade" id="calendarDetailViewModal" tabindex="-1"
              aria-labelledby="calendarDetailModalViewLabel" aria-hidden="true"></div>
     </div>
-
 
     <!-- 캘린더 -->
     <div id='calendar'></div>

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -20,8 +19,7 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
-@DynamicInsert
-public class User {
+public class User extends HashMap<String, Object> {
     @Id
     private String user_id;
     private String user_name;

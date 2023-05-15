@@ -39,13 +39,9 @@
         }
       });
 
-
-      var calendarForm = document.calendarForm;
-      console.log(calendarForm);
       // 저장
       $("#updateCalBtn").click(function () {
-        // $("#calendarForm").attr("action", "/calendars/new");
-        calendarForm.submit();
+        document.getElementById("calendarForm").submit();
       });
 
       // 달력 삭제
@@ -53,7 +49,7 @@
         alert("[" + $("#cal_title").val() + "] 달력과 관련된 모든 일정이 삭제됩니다.");
         $("#calendarForm").attr("action", "/calendars/" + $("#cal_id").val() * 1);
 
-        calendarForm.submit();
+        document.getElementById("calendarForm").submit();
       });
     });
   </script>
@@ -88,7 +84,7 @@
           </div>
           <div class="mb-3">
             <label for="cal_title" class="col-form-label">달력 이름</label>
-            <input type="text" class="form-control" id="cal_title">
+            <input type="text" class="form-control" id="cal_title" name="cal_title">
           </div>
           <div class="mb-3">
             <div class="form-check form-switch">
