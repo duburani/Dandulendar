@@ -29,7 +29,7 @@ public class UserRepository {
         em.persist(user);
     }
 
-    public Optional<User> findUserByCode(String coupleCode) {
+    public Optional<User> findUserByCoupleCode(String coupleCode) {
         return em.createQuery("select u from User u where u.couple_code = :coupleCode", User.class)
                 .setParameter("coupleCode", coupleCode)
                 .getResultList()
@@ -39,4 +39,5 @@ public class UserRepository {
     public void saveUserGroup(UserGroup userGroup) {
         em.persist(userGroup);
     }
+
 }

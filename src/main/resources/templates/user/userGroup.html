@@ -40,25 +40,9 @@
             alert('초대코드 복사 완료');
         }
 
-        function copyLink3(obj){
-            console.log(obj);
-            //밑에서 onclick="copyLink3(this)"
-        }
-
-        function memorialDateSubmit(){
-            //console.log( document.groupForm[0] );
-            //var memorialDate = document.getElementById('memorial_date');
-            //console.log(new Date(document.getElementById('memorial_date')));
-
-            //var memorial_date = $('#memorial_date').val();
-            //memorial_date = $('#memorial_date').val().replace(/-/g,'');
-
-
-           /* var memorial_date = new Date($('#memorial_date').val().replace(/-/g,''));
-            $(`#memorial_date`).val(memorial_date);*/
-
+        // 커플 생성
+        function saveUserGroup(){
             document.groupForm.submit();
-            // document.getElementById("groupForm").su
         }
 
         $(function() {
@@ -89,7 +73,7 @@
 
             });//datepicker end
 
-            let coupleLink = window.location.href + "?coupleCode=" + $("#couple_code").val();
+            let coupleLink = window.location.href + "?coupleCode=" + $("#coupleLink").val();
             $("#coupleLink").val(coupleLink);
 
         });//ready end
@@ -110,7 +94,7 @@
                 <div>
                     <h5 class="title" id="inviteModalLabel">초대링크 공유하기</h5>
                     <div class="input-group mb-3" style="width: 500px; height: 60px; margin: auto">
-                        <input value="초대 링크" id="coupleLink" class="form-control" aria-describedby="button-addon1">
+                        <input value="초대 링크" id="coupleLink" class="form-control" aria-describedby="button-addon1" th:value="${userInfo.couple_code}">
                         <button class="btn btn-outline-secondary" type="button" id="coupleLinkCopyBtn" onclick="copyLink()">초대 링크 복사</button>
                     </div>
                     <div class="input-group mb-3" style="width: 500px; height: 60px; margin: auto">
@@ -139,23 +123,9 @@
                     <div class="modal fade" id="memorialDateModal" tabindex="-1" role="dialog" aria-labelledby="memorialDateModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <!--확인-->
-                                <!--확인-->
-                                <!--확인-->
-                                <!--확인-->
-                                <!--확인-->
-                                <!--확인-->
-                                <!--확인-->
-                                <!--확인-->
-                                <!--확인-->
-                                <!--확인-->
-                                <!--확인-->
-                                <!--확인-->
-                                <!--확인-->
-                                <!--확인-->
                                 <form action="/userGroup" id="groupForm" name="groupForm" method="post">
                                     <input type="hidden" id="user_id" name="user_id" th:value="${userInfo.user_id}">
-                                    <input type="hidden" id="couple_code" name="couple_code" th:value="${userInfo.couple_code}">
+                                    <input type="hidden" id="couple_code" name="couple_code" th:value="${coupleCode}">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="memorialDateModalLabel">기념일 입력</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -166,9 +136,7 @@
                                 </form>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <!--<button type="submit" class="btn btn-primary" id="memorialDateSubmitBtn" onclick="memorialDateSubmit()">Send</button>-->
-                                    <!--<button type="button" class="btn btn-primary" id="memorialDateSubmitBtn">Send</button>-->
-                                    <button type="button" class="btn btn-pink" id="memorialDateSubmit" onclick="memorialDateSubmit()">저장</button>
+                                    <button type="button" class="btn btn-pink" id="saveBtn" onclick="saveUserGroup()">저장</button>
                                 </div>
                             </div>
 

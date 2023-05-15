@@ -4,7 +4,6 @@ import damdorani.dandulendar.domain.Group;
 import damdorani.dandulendar.domain.User;
 import damdorani.dandulendar.domain.UserGroup;
 import damdorani.dandulendar.dto.GroupForm;
-import damdorani.dandulendar.dto.UserGroupForm;
 import damdorani.dandulendar.repository.GroupRepository;
 import damdorani.dandulendar.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +35,10 @@ public class GroupService {
     }
 
     @Transactional
-    public void saveUserGroup(UserGroupForm userGroupForm, int groupId){
+    public void saveUserGroup(String userId, int groupId){
 
         // user -> group -> userGroup
-        Optional<User> user = userRepository.findByUserId(userGroupForm.getUser_id());
+        Optional<User> user = userRepository.findByUserId(userId);
         Group group = groupRepository.findGroup(groupId);
 
         UserGroup userGroup = UserGroup.builder()
@@ -48,4 +47,6 @@ public class GroupService {
                 .build();
         userRepository.saveUserGroup(userGroup);
     }
+
+
 }

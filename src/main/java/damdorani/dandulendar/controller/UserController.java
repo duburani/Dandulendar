@@ -1,10 +1,8 @@
 package damdorani.dandulendar.controller;
 
 import damdorani.dandulendar.domain.User;
-import damdorani.dandulendar.domain.UserGroup;
 import damdorani.dandulendar.dto.GroupForm;
-import damdorani.dandulendar.dto.UserForm;
-import damdorani.dandulendar.dto.UserGroupForm;
+import damdorani.dandulendar.dto.SessionUser;
 import damdorani.dandulendar.service.GroupService;
 import damdorani.dandulendar.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,12 +21,11 @@ import javax.validation.Valid;
 public class UserController {
     private final UserService userService;
     private final GroupService groupService;
+    private final HttpSession session;
 
     // 그룹 조회
     @GetMapping("/userGroup")
-    public String userGroup(@RequestParam(required = false, name = "coupleCode") String coupleCode, HttpServletRequest request, Model model){
-        HttpSession session = request.getSession();
-
+    public String userGroup(@RequestParam(required = false, name = "coupleCode") String coupleCode, Model model){
         Object objUser = session.getAttribute("user");
         if(objUser == null) {
             return "redirect:/";
@@ -41,15 +38,20 @@ public class UserController {
 
     // 그룹 생성
     @PostMapping("/userGroup")
-    public String userGroup(@Valid GroupForm groupForm, UserGroupForm userGroupForm, Model model){
+    public String userGroup(@Valid GroupForm groupForm, Model model){
 
         // saveGroup
-        groupForm.setMemorial_date(groupForm.getMemorial_date().replace("-",""));
         model.addAttribute("groupForm", groupForm);
         int groupId = groupService.saveGroup(groupForm);
 
         // saveUserGroup
-        groupService.saveUserGroup(userGroupForm, groupId);
+        SessionUser objUser = (SessionUser) session.getAttribute("user");
+        groupService.saveUserGroup(objUser.getUser_id(), groupId);
+
+        // CC 찾기
+        Optional<User> userByCode = userService.findUserByCoupleCode(groupForm.getCouple_code());
+        groupService.saveUserGroup(userByCode.get().getUser_id(), groupId);
+
 
         return "redirect:/calendars";
     }

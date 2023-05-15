@@ -71,7 +71,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String coupleCode;
         while(true){
             coupleCode = this.makeRandomCode();
-            Optional<User> userByCode = userRepository.findUserByCode(coupleCode);
+            Optional<User> userByCode = userRepository.findUserByCoupleCode(coupleCode);
             if(userByCode.isEmpty())
                 break;
         }
