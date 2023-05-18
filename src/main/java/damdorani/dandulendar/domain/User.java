@@ -7,14 +7,13 @@ import lombok.Getter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
-public class User extends HashMap<String, Object> {
+public class User {
     @Id
     private String user_id;
     private String user_name;

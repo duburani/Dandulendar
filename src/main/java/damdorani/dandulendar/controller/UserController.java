@@ -2,6 +2,7 @@ package damdorani.dandulendar.controller;
 
 import damdorani.dandulendar.domain.User;
 import damdorani.dandulendar.dto.GroupForm;
+import damdorani.dandulendar.dto.UserGroupResponse;
 import damdorani.dandulendar.dto.SessionUser;
 import damdorani.dandulendar.service.GroupService;
 import damdorani.dandulendar.service.UserService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -27,11 +29,21 @@ public class UserController {
     @GetMapping("/userGroup")
     public String userGroup(@RequestParam(required = false, name = "coupleCode") String coupleCode, Model model){
         Object objUser = session.getAttribute("user");
-        if(objUser == null) {
+        if(objUser != null){
+            SessionUser sessionUser = (SessionUser) objUser;
+            String userId = sessionUser.getUser_id();
+            List<UserGroupResponse> groupList = groupService.findGroupByUserId(userId);
+
+            if(groupList.size() > 1){
+                model.addAttribute("groupInfo", groupList);
+                return "redirect:/calendars";
+            }
+
+            model.addAttribute("userInfo", sessionUser);
+        }else{
             return "redirect:/";
         }
 
-        model.addAttribute("userInfo", objUser);
         model.addAttribute("coupleCode", coupleCode);
         return "user/userGroup";
     }

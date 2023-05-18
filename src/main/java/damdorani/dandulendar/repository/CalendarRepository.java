@@ -5,6 +5,8 @@ import damdorani.dandulendar.domain.Calendar;
 import damdorani.dandulendar.domain.CalendarDetail;
 import static damdorani.dandulendar.domain.QCalendar.calendar;
 import static damdorani.dandulendar.domain.QCalendarDetail.calendarDetail;
+
+import damdorani.dandulendar.dto.CalendarRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -27,11 +29,13 @@ public class CalendarRepository {
         return em.find(Calendar.class, id);
     }
 
-    public List<Calendar> findCalendarList(){
+    public List<Calendar> findCalendarList(int groupId){
         return queryFactory
                 .selectDistinct(calendar)
                 .from(calendar)
-                .where(calendar.del_yn.eq("N"))
+                .where(calendar.del_yn.eq("N")
+                        .and(calendar.group.group_id.eq(groupId))
+                )
                 .fetch();
 //        return em.createQuery("select c from Calendar c where del_yn = 'N'", Calendar.class).getResultList();
     }
@@ -44,16 +48,17 @@ public class CalendarRepository {
         return em.find(CalendarDetail.class, calDtlId);
     }
 
-    public List<Calendar> findCalendarDetailList(LocalDateTime startStr, LocalDateTime endStr) {
+    public List<Calendar> findCalendarDetailList(CalendarRequest calendarRequest) {
         return queryFactory
                 .selectDistinct(calendar)
                 .from(calendar)
                 .join(calendar.calendars, calendarDetail)
-                .where(calendarDetail.del_yn.eq("N"))
-
-                .where(calendarDetail.start_full_date.between(startStr, endStr))
-                .where(calendarDetail.end_full_date.between(startStr, endStr))
-
+                .where(
+                        calendarDetail.del_yn.eq("N")
+                                .and(calendar.group.group_id.eq(calendarRequest.getGroupId()))
+                        .and(calendarDetail.start_full_date.between(calendarRequest.getStartStr(), calendarRequest.getEndStr()))
+                        .and(calendarDetail.end_full_date.between(calendarRequest.getStartStr(), calendarRequest.getEndStr()))
+                )
                 .fetchJoin()
                 .fetch();
     }

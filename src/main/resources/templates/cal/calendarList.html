@@ -67,7 +67,10 @@
 
         // 달력 셀에 일정 뿌리기
         function calendarDetailList(info) {
-            let data = {"startStr":info.startStr, "endStr":info.endStr};
+            let data = {"startStr":info.startStr
+                        , "endStr":info.endStr
+                        , "groupId":$("#groupId").val()
+            };
 
             console.log(data);
 
@@ -91,7 +94,7 @@
                 url: "/calendars/new"
                 , method: "GET"
                 , async: false
-                // ,data : data
+                , data : {"groupId" : $("#groupId").val()}
                 , success: function (data) {
                     $("#calendarCateModal").html(data);
                     $("#calendarCateModal").modal('show');
@@ -146,6 +149,8 @@
 <body>
 <div layout:fragment="content" id="calendarBody">
     <div>
+        <input type="text" id="groupId" th:value="${ugList.get(0).group_id}">
+
         <div class="modal fade" id="calendarCateModal" tabindex="-1" aria-labelledby="calendarCateModalLabel"
              aria-hidden="true"></div>
 
