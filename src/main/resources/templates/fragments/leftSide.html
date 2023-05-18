@@ -6,8 +6,13 @@
         <span class="d-block d-lg-none">Clarence Taylor</span>
         <span class="d-none d-lg-block"><img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="/assets/img/smile.jpg" alt="..." /></span>
       </a>
-      <h4 class="masthead-heading text-uppercase mb-0">damdorong ❤ duburani</h4>
-<!--      <h4 class="masthead-heading text-uppercase mb-0" th:text="${userInfo.user_name}"></h4>-->
+      <h4 class="masthead-heading text-uppercase mb-0" >
+        <span th:value="${ugList}"></span>
+
+<!--          <span th:if="${not #strings.isEmpty(ugList)}" th:text="${ugList.get(0).user_name}"></span>-->
+          <span>❤</span>
+<!--          <span th:if="${not #strings.isEmpty(ugList)}" th:text="${ugList.get(1).user_name}"></span>-->
+      </h4>
       <!-- Icon Divider-->
       <div class="divider-custom divider-light">
         <div class="divider-custom-line"></div>
@@ -15,7 +20,7 @@
         <div class="divider-custom-line"></div>
       </div>
       <!-- Masthead Subheading-->
-      <p class="masthead-subheading font-weight-light mb-0">단둘이서 0일째</p>
+      <p class="masthead-subheading font-weight-light mb-0" th:text="|단둘이서 ${dDays}일째|"></p>
       <a href="/logout" class="font-weight-light mb-0">logout</a>
     </div>
   </aside>

@@ -1,12 +1,7 @@
 package damdorani.dandulendar.controller;
 
-import damdorani.dandulendar.domain.Calendar;
-import damdorani.dandulendar.domain.CalendarDetail;
-import damdorani.dandulendar.domain.ColorCode;
-import damdorani.dandulendar.domain.User;
-import damdorani.dandulendar.dto.CalendarDetailForm;
-import damdorani.dandulendar.dto.CalendarForm;
-import damdorani.dandulendar.dto.SessionUser;
+import damdorani.dandulendar.domain.*;
+import damdorani.dandulendar.dto.*;
 import damdorani.dandulendar.service.CalendarService;
 import damdorani.dandulendar.service.GroupService;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +13,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +32,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 public class CalController {
     private final CalendarService calendarService;
     private final GroupService groupService;
+    private final HttpSession session;
 
     /**
      * 달력
@@ -43,19 +40,49 @@ public class CalController {
      * @return
      */
     @GetMapping("/calendars")
-    public String calendarList(HttpServletRequest request, Model model){
-        /**
-         * 그룹 짝이 지어지지 않으면 넘어갈 수 없게 막아야 함
-         *
-         */
+    public String calendarList(Model model) throws ParseException {
+        Object objUser = session.getAttribute("user");
+        if(objUser == null){
+            return "redirect:/";
+        }else{
+            SessionUser sessionUser = (SessionUser) objUser;
+            String userId = sessionUser.getUser_id();
+            List<UserGroupResponse> ugList = groupService.findGroupByUserId(userId);
 
+            if(ugList.size() < 1){
+                return "redirect:/userGroup";
+            }
 
-        HttpSession session = request.getSession();
-//        model.addAttribute("userInfo", session.getAttribute("user"));
-        model.addAttribute("userInfo", new SessionUser(User.builder().build()));
+            int dDays = this.calcMemorialDate(ugList.get(0).getMemorial_date());
 
+            model.addAttribute("userInfo", sessionUser);
+            model.addAttribute("ugList", ugList);
+            model.addAttribute("dDays", dDays);
+
+        }
         return "cal/calendarList";
     }
+
+    /**
+     * 기념일 계산
+     * @param memorialDate
+     * @return
+     */
+    private int calcMemorialDate(String memorialDate) throws ParseException {
+        String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date(System.currentTimeMillis()));
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date date = new Date(dateFormat.parse(memorialDate).getTime());
+        Date todayDate = new Date(dateFormat.parse(today).getTime());
+
+        long calculate = todayDate.getTime() - date.getTime();
+
+        int dDays = (int) (calculate / (24*60*60*1000));
+
+        return dDays;
+    }
+
 
     /**
      * 달력 등록 화면
@@ -64,9 +91,10 @@ public class CalController {
      * @return
      */
     @GetMapping("/calendars/new")
-    public String calendarForm(@RequestParam(required = false, defaultValue = "0") int groupId, Model model){
-        List<Calendar> calendarList = calendarService.findCalendarList();
+    public String calendarForm(@RequestParam int groupId, Model model){
+        List<Calendar> calendarList = calendarService.findCalendarList(groupId);
         model.addAttribute("calendarList", calendarList);
+        model.addAttribute("groupId", groupId);
         return "cal/calendarForm";
     }
 
@@ -140,15 +168,14 @@ public class CalController {
      */
     @GetMapping("/calendars/detail")
     @ResponseBody
-    public List<Map<String, Object>> calendarsDetailList(@RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime startStr
-                                                        , @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime endStr) throws Exception
+    public List<Map<String, Object>> calendarsDetailList(CalendarRequest calendarRequest) throws Exception
 
     {
         JSONArray jsonArr = new JSONArray();
 
         HashMap<String, Object> hash = new HashMap<>();
 
-        List<Calendar> calendarDetailList = calendarService.findCalendarDetailList(startStr, endStr);
+        List<Calendar> calendarDetailList = calendarService.findCalendarDetailList(calendarRequest);
         for(Calendar calendar : calendarDetailList){
             hash.put("color", ColorCode.valueOf(calendar.getColor().toUpperCase()).getRgb_color());
             hash.put("cal_title", calendar.getCal_title());
@@ -181,14 +208,17 @@ public class CalController {
      * @return
      */
     @GetMapping("/calendars/detail/new")
-    public String calendarDetailForm(@RequestParam(required = false, defaultValue = "0") int calDtlId, @RequestParam(required = false) String dateStr, Model model){
+    public String calendarDetailForm(@RequestParam(required = false, defaultValue = "0") int calDtlId
+                                    , @RequestParam(required = false) String dateStr
+                                    , @RequestParam int groupId
+                                    , Model model){
         CalendarDetail calendarDetail = null;
         if(calDtlId != 0){
             calendarDetail = calendarService.findCalendarDetail(calDtlId);
             int cal_id = calendarDetail.getCalendar().getCal_id();
             model.addAttribute("cal_id", cal_id);
         }
-        List<Calendar> calendarList = calendarService.findCalendarList();
+        List<Calendar> calendarList = calendarService.findCalendarList(groupId);
 
 //        model.addAttribute("resultData", calendarDetail);
         model.addAttribute("dateStr", dateStr);

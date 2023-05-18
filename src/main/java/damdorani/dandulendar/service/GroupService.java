@@ -4,12 +4,14 @@ import damdorani.dandulendar.domain.Group;
 import damdorani.dandulendar.domain.User;
 import damdorani.dandulendar.domain.UserGroup;
 import damdorani.dandulendar.dto.GroupForm;
+import damdorani.dandulendar.dto.UserGroupResponse;
 import damdorani.dandulendar.repository.GroupRepository;
 import damdorani.dandulendar.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,5 +50,9 @@ public class GroupService {
         userRepository.saveUserGroup(userGroup);
     }
 
+
+    public List<UserGroupResponse> findGroupByUserId(String userId) {
+        return groupRepository.findGroupByUserId(userId);
+    }
 
 }
