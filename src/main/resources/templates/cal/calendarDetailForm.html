@@ -76,10 +76,11 @@
         <form class="row gx-2" id="calendarDetailForm" name="calendarDetailForm" th:object="${calendarDetailForm}" method="post" action="/calendars/detail/new">
           <input type="hidden" id="_method" name="_method" value="">
           <input type="hidden" id="cal_dtl_id" name="cal_dtl_id" th:field="*{cal_dtl_id}">
+          <input type="hidden" name="group_id" th:value="${groupId}">
           <div class="mb-3">
             <label class="col-form-label">달력</label>
             <select class="form-select" aria-label="Default select example" name="cal_id">
-              <option th:each="cd : ${calendarList}" th:value="${cd.cal_id}" th:text="${cd.cal_title}" th:selected="${#strings.equals(cd.cal_id, #strings.defaultString(cal_id, 0))}"></option>
+              <option th:each="cd : ${calendarList}" th:value="${cd.calId}" th:text="${cd.calTitle}" th:selected="${#strings.equals(cd.calId, #strings.defaultString(cal_id, 0))}"></option>
             </select>
           </div>
 

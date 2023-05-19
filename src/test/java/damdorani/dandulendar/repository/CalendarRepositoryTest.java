@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import damdorani.dandulendar.domain.Calendar;
 import damdorani.dandulendar.domain.QCalendar;
 import damdorani.dandulendar.domain.QCalendarDetail;
+import damdorani.dandulendar.dto.CalendarResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,26 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class CalendarRepositoryTest {
     @Autowired
-    EntityManager em;
-
-    @Autowired
-    JPAQueryFactory jpaQueryFactory;
+    CalendarRepository calendarRepository;
 
     @Test
-    public void queryDsl_findCalendarDetailList() throws Exception{
-        // given
-        QCalendar qCalendar = new QCalendar("title");
-        QCalendarDetail qCalendarDetail = new QCalendarDetail("qCalendarDetail");
-
-        List<Calendar> calendarList = jpaQueryFactory.selectFrom(qCalendar)
-                .join(qCalendar.calendars, qCalendarDetail)
-                .fetchJoin()
-                .fetch();
-
-
-        // when
-
-        // then
-
+    public void findCalendarList() throws  Exception{
+        List<CalendarResponse> calendarList = calendarRepository.findCalendarList(1);
+        calendarList.size();
     }
 }

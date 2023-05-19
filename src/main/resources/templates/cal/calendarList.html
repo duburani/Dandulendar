@@ -106,7 +106,7 @@
         function setCalDtl(type, info) {
             let calId = type == 'I' ? "" : info.event.id;
             let dateStr = type == 'I' ? info.dateStr : "";
-            let data = {"calDtlId": calId, "dateStr": dateStr};
+            let data = {"calDtlId": calId, "dateStr": dateStr, "groupId" : $("#groupId").val()};
             $.ajax({
                 url: "/calendars/detail/new"
                 , method: "GET"
@@ -149,7 +149,7 @@
 <body>
 <div layout:fragment="content" id="calendarBody">
     <div>
-        <input type="text" id="groupId" th:value="${ugList.get(0).group_id}">
+        <input type="hidden" id="groupId" th:value="${ugList.get(0).group_id}" >
 
         <div class="modal fade" id="calendarCateModal" tabindex="-1" aria-labelledby="calendarCateModalLabel"
              aria-hidden="true"></div>

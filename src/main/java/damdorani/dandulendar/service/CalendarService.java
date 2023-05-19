@@ -6,6 +6,7 @@ import damdorani.dandulendar.domain.Group;
 import damdorani.dandulendar.dto.CalendarDetailForm;
 import damdorani.dandulendar.dto.CalendarForm;
 import damdorani.dandulendar.dto.CalendarRequest;
+import damdorani.dandulendar.dto.CalendarResponse;
 import damdorani.dandulendar.repository.CalendarRepository;
 import damdorani.dandulendar.repository.GroupRepository;
 import damdorani.dandulendar.util.CommonUtils;
@@ -43,7 +44,7 @@ public class CalendarService {
     }
 
     // 달력 조회
-    public List<Calendar> findCalendarList(int groupId){
+    public List<CalendarResponse> findCalendarList(int groupId){
         return calendarRepository.findCalendarList(groupId);
     }
 

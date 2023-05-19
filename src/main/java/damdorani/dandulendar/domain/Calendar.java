@@ -4,6 +4,7 @@ import damdorani.dandulendar.dto.CalendarForm;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 @Table(name = "Calendar")
 @Builder
 @AllArgsConstructor
+@DynamicInsert
 public class Calendar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

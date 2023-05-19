@@ -92,7 +92,7 @@ public class CalController {
      */
     @GetMapping("/calendars/new")
     public String calendarForm(@RequestParam int groupId, Model model){
-        List<Calendar> calendarList = calendarService.findCalendarList(groupId);
+        List<CalendarResponse> calendarList = calendarService.findCalendarList(groupId);
         model.addAttribute("calendarList", calendarList);
         model.addAttribute("groupId", groupId);
         return "cal/calendarForm";
@@ -101,34 +101,22 @@ public class CalController {
     /**
      * 달력 생성
      * @param calendarForm
-     * @param bindingResult
      * @return
      */
     @PostMapping("/calendars/new")
-    public String createCal(@Valid CalendarForm calendarForm, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return "cal/calendarList";
-        }
-
+    public String createCal(@Valid CalendarForm calendarForm){
         calendarService.craete(calendarForm);
-
         return "redirect:/calendars";
     }
 
     /**
      * 달력 수정
      * @param calendarForm
-     * @param bindingResult
      * @return
      */
     @PutMapping("/calendars/new")
-    public String updateCal(@Valid CalendarForm calendarForm, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return "cal/calendarList";
-        }
-
+    public String updateCal(@Valid CalendarForm calendarForm){
         calendarService.update(calendarForm);
-
         return "redirect:/calendars";
     }
 
@@ -218,10 +206,11 @@ public class CalController {
             int cal_id = calendarDetail.getCalendar().getCal_id();
             model.addAttribute("cal_id", cal_id);
         }
-        List<Calendar> calendarList = calendarService.findCalendarList(groupId);
+        List<CalendarResponse> calendarList = calendarService.findCalendarList(groupId);
 
 //        model.addAttribute("resultData", calendarDetail);
         model.addAttribute("dateStr", dateStr);
+        model.addAttribute("groupId", groupId);
         model.addAttribute("calendarList", calendarList);
         model.addAttribute("calendarDetailForm", calDtlId == 0 ? new CalendarDetailForm() : calendarDetail);
 
@@ -231,15 +220,10 @@ public class CalController {
     /**
      * 달력 일정 상세 등록
      * @param calendarDetailForm
-     * @param bindingResult
      * @return
      */
     @PostMapping("/calendars/detail/new")
-    public String createCalDetail(@Valid CalendarDetailForm calendarDetailForm, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return "cal/calendarList";
-        }
-
+    public String createCalDetail(@Valid CalendarDetailForm calendarDetailForm){
         calendarService.craete(calendarDetailForm);
 
         return "redirect:/calendars";
@@ -248,15 +232,10 @@ public class CalController {
     /**
      * 달력 일정 상세 수정
      * @param calendarDetailForm
-     * @param bindingResult
      * @return
      */
     @PutMapping("/calendars/detail/new")
-    public String updateCalDetail(@Valid CalendarDetailForm calendarDetailForm, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return "cal/calendarList";
-        }
-
+    public String updateCalDetail(@Valid CalendarDetailForm calendarDetailForm){
         calendarService.updateCalendarDetail(calendarDetailForm);
         return "redirect:/calendars";
     }
@@ -271,7 +250,4 @@ public class CalController {
         calendarService.deleteCalendarDetail(calDtlId);
         return "redirect:/calendars";
     }
-
-
-
 }

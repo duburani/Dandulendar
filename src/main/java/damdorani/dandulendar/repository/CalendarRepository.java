@@ -1,5 +1,6 @@
 package damdorani.dandulendar.repository;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import damdorani.dandulendar.domain.Calendar;
 import damdorani.dandulendar.domain.CalendarDetail;
@@ -7,6 +8,7 @@ import static damdorani.dandulendar.domain.QCalendar.calendar;
 import static damdorani.dandulendar.domain.QCalendarDetail.calendarDetail;
 
 import damdorani.dandulendar.dto.CalendarRequest;
+import damdorani.dandulendar.dto.CalendarResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -29,15 +31,14 @@ public class CalendarRepository {
         return em.find(Calendar.class, id);
     }
 
-    public List<Calendar> findCalendarList(int groupId){
+    public List<CalendarResponse> findCalendarList(int groupId){
         return queryFactory
-                .selectDistinct(calendar)
+                .select(Projections.constructor(CalendarResponse.class, calendar, calendar.calendars.size(), calendar.group.group_id))
                 .from(calendar)
                 .where(calendar.del_yn.eq("N")
                         .and(calendar.group.group_id.eq(groupId))
                 )
                 .fetch();
-//        return em.createQuery("select c from Calendar c where del_yn = 'N'", Calendar.class).getResultList();
     }
 
     public void saveCalendarDetail(CalendarDetail calendarDetail){

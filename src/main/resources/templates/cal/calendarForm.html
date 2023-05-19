@@ -64,13 +64,13 @@
       </div>
       <div class="modal-body">
         <form id="calendarForm" name="calendarForm" method="POST" action="/calendars/new">
-          <input type="text" id="_method" name="_method">
-          <input type="text" id="cal_id" name="cal_id">
+          <input type="hidden" id="_method" name="_method">
+          <input type="hidden" id="cal_id" name="cal_id" value="0">
           <div class="mb-3">
             <ul class="list-group">
-              <li class="d-flex list-group-item list-group-item-action" th:each="cd : ${calendarList}" onclick="selectGroup(this)" th:data-id="${cd.cal_id}" th:data-color="${cd.color}" th:data-title="${cd.cal_title}" th:data-meyn="${cd.memorial_yn}">
-                <div class="ms-2 me-auto" th:text="${cd.cal_title}"></div>
-                <span class="badge rounded-pill" th:classappend="${'bg-'+cd.color}">14</span>
+              <li class="d-flex list-group-item list-group-item-action" th:each="cd : ${calendarList}" onclick="selectGroup(this)" th:data-id="${cd.calId}" th:data-color="${cd.color}" th:data-title="${cd.calTitle}" th:data-meyn="${cd.memorialYn}">
+                <div class="ms-2 me-auto" th:text="${cd.calTitle}"></div>
+                <span class="badge rounded-pill" th:classappend="${'bg-'+cd.color}" th:text="${cd.calCnt}"></span>
               </li>
             </ul>
           </div>
@@ -94,7 +94,7 @@
               <input class="form-check-input" type="checkbox" id="memorial_ch">
             </div>
           </div>
-          <input type="text" name="group_id" th:value="${groupId}">
+          <input type="hidden" name="group_id" th:value="${groupId}">
         </form>
       </div>
       <div class="modal-footer">

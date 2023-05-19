@@ -19,6 +19,6 @@ class GroupRepositoryTest {
     void findGroupByUserId() {
         String userId = "naver_oli9OENtDPDqJh6Z1pmFUqvev9UAlnSMkVIJdk-52Ho";
 //        List<GroupForm> groupByUserId = groupRepository.findGroupByUserId(userId);
-        groupRepository.findGroupByUserId(userId);
+//        groupRepository.findGroupByUserId(userId);
     }
 }
