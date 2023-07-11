@@ -9,6 +9,9 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
     generate-ddl: false
+    properties:
+      hibernate:
+        format_sql: true
     hibernate:
       ddl-auto: none
       naming:

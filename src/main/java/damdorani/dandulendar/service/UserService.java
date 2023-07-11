@@ -1,8 +1,10 @@
 package damdorani.dandulendar.service;
 
+import damdorani.dandulendar.domain.Group;
 import damdorani.dandulendar.domain.User;
 import damdorani.dandulendar.dto.UserForm;
-import damdorani.dandulendar.repository.GroupRepository;
+import damdorani.dandulendar.repository.GroupJpaRepository;
+import damdorani.dandulendar.repository.UserJpaRepository;
 import damdorani.dandulendar.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,12 +15,17 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserService{
+public class UserService {
+    private final UserJpaRepository userJpaRepository;
+    private final GroupJpaRepository groupJpaRepository;
     private final UserRepository userRepository;
-    private final GroupRepository groupRepository;
+
+    public User findUser(String userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
 
     @Transactional
-    public void saveUser(UserForm userForm){
+    public void saveUser(UserForm userForm) {
         User user = User.builder()
                 .user_id(userForm.getUser_id())
                 .user_name(userForm.getUser_name())
@@ -26,16 +33,17 @@ public class UserService{
                 .email(userForm.getEmail())
                 .provider(userForm.getProvider())
                 .build();
-        userRepository.saveUser(user);
+        userRepository.save(user);
     }
 
-    public User findUserById(String id){
-        return userRepository.findUserById(id);
+    public User findUserByCoupleCode(String coupleCode) {
+        return userRepository.findUserByCoupleCode(coupleCode).orElse(null);
     }
 
-    public Optional<User> findUserByCoupleCode(String coupleCode){
-        return userRepository.findUserByCoupleCode(coupleCode);
+    @Transactional
+    public void setGroup(String userId, Group group){
+        Optional<User> optionalUser = userRepository.findById(userId);
+        User user = optionalUser.orElse(null);
+        user.setGroup(group);
     }
-
-
 }

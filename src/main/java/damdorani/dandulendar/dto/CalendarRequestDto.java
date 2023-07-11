@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class CalendarRequest {
+public class CalendarRequestDto {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime startStr;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

@@ -3,6 +3,7 @@ package damdorani.dandulendar.oauth2;
 import damdorani.dandulendar.domain.Role;
 import damdorani.dandulendar.domain.User;
 import damdorani.dandulendar.dto.SessionUser;
+import damdorani.dandulendar.repository.UserJpaRepository;
 import damdorani.dandulendar.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,6 +25,7 @@ import java.util.Random;
 @Transactional
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+    private final UserJpaRepository userJpaRepository;
     private final UserRepository userRepository;
     private final HttpSession httpSession;
 
@@ -41,10 +43,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String access_token = userRequest.getAccessToken().getTokenValue();
 
         User user;
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
+//        Optional<User> optionalUser = userJpaRepository.findByUserId(userId);
+        Optional<User> findUser = userRepository.findById(userId);
 
-        if (optionalUser.isPresent()){ // 로그인
-            user = optionalUser.get();
+        if (findUser.isPresent()){ // 로그인
+            user = findUser.get();
         }else{ // 회원가입
             user = User.builder()
                     .user_id(userId)
@@ -52,10 +55,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .email(attributes.getEmail())
                     .phone(attributes.getPhone())
                     .provider(registrationId)
-                    .couple_code(this.makeCoupleCode())
+                    .coupleCode(this.makeCoupleCode())
                     .role(Role.USER)
                     .build();
-            userRepository.saveUser(user);
+            userRepository.save(user);
+//            userJpaRepository.saveUser(user);
         }
 
         httpSession.setAttribute("user", new SessionUser(user));
@@ -71,7 +75,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String coupleCode;
         while(true){
             coupleCode = this.makeRandomCode();
-            Optional<User> userByCode = userRepository.findUserByCoupleCode(coupleCode);
+            Optional<User> userByCode = userJpaRepository.findUserByCoupleCode(coupleCode);
             if(userByCode.isEmpty())
                 break;
         }
@@ -80,6 +84,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     // 랜덤코드 생성
     public String makeRandomCode(){
+//        UUID.randomUUID().toString();
+
         Random rnd =new Random();
 
         StringBuffer buf =new StringBuffer();

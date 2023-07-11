@@ -39,9 +39,11 @@
 
             // 매칭버튼 클릭
             $("#memorialDateBtn").click(function(e){
-                if($("#coupleCodeInput").val() == '' || $("#coupleCodeInput").val() == null){
+                let cpCode = $("#coupleCodeInput").val();
+                if(cpCode == '' || cpCode == null){
                     alert("초대 코드를 입력하시거나 초대 링크를 통해 접속하세요.");
                 }else{
+                    $("#couple_code").val(cpCode);
                     $("#memorialDateModal").modal('show');
                 }
             });

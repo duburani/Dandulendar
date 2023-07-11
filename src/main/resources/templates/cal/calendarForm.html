@@ -66,7 +66,8 @@
         <form id="calendarForm" name="calendarForm" method="POST" action="/calendars/new">
           <input type="hidden" id="_method" name="_method">
           <input type="hidden" id="cal_id" name="cal_id" value="0">
-          <div class="mb-3">
+          <div class="mb-3" th:if="${!#lists.isEmpty(calendarList)}">
+            <label class="col-form-label">내 달력</label>
             <ul class="list-group">
               <li class="d-flex list-group-item list-group-item-action" th:each="cd : ${calendarList}" onclick="selectGroup(this)" th:data-id="${cd.calId}" th:data-color="${cd.color}" th:data-title="${cd.calTitle}" th:data-meyn="${cd.memorialYn}">
                 <div class="ms-2 me-auto" th:text="${cd.calTitle}"></div>
@@ -76,7 +77,7 @@
           </div>
           <div class="mb-3">
             <label class="col-form-label">달력 색상</label>
-            <input type="text" id="color" name="color">
+            <input type="hidden" id="color" name="color">
             <ul class="list-group list-group-horizontal" id="cal-color">
               <li th:each="color : ${T(damdorani.dandulendar.domain.ColorCode).values()}">
                 <a href="javascript:void(0);" th:onclick="selectGroupColor(this, [[${color.getCode_id()}]] )" class="list-group-item list-group-item-action" th:classappend="${'list-group-item-'+color.getCode_id()}" th:text="${color.getCode_name()}"></a>
@@ -89,8 +90,8 @@
           </div>
           <div class="mb-3">
             <div class="form-check form-switch">
-              <label class="memorial-yn">기념일</label>
-              <input type="text" id="memorial_yn" name="memorial_yn" value="N">
+              <label class="memorial-yn" for="memorial_ch">기념일</label>
+              <input type="hidden" id="memorial_yn" name="memorial_yn" value="N">
               <input class="form-check-input" type="checkbox" id="memorial_ch">
             </div>
           </div>

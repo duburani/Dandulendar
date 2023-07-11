@@ -1,38 +1,29 @@
 package damdorani.dandulendar.controller;
 
-import damdorani.dandulendar.domain.*;
+import damdorani.dandulendar.domain.Group;
 import damdorani.dandulendar.dto.*;
+import damdorani.dandulendar.oauth2.LoginUser;
 import damdorani.dandulendar.service.CalendarService;
 import damdorani.dandulendar.service.GroupService;
+import damdorani.dandulendar.service.MainService;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 @Controller
 @RequiredArgsConstructor
 public class CalController {
     private final CalendarService calendarService;
     private final GroupService groupService;
-    private final HttpSession session;
+    private final MainService mainService;
 
     /**
      * 달력
@@ -40,27 +31,21 @@ public class CalController {
      * @return
      */
     @GetMapping("/calendars")
-    public String calendarList(Model model) throws ParseException {
-        Object objUser = session.getAttribute("user");
-        if(objUser == null){
-            return "redirect:/";
-        }else{
-            SessionUser sessionUser = (SessionUser) objUser;
-            String userId = sessionUser.getUser_id();
-            List<UserGroupResponse> ugList = groupService.findGroupByUserId(userId);
+    public String calendarList(Model model, @LoginUser SessionUser sessionUser) throws ParseException {
+        String returnUrl = mainService.returnUrlByUserGroup(sessionUser);
+        if("calendars".equals(returnUrl)){
 
-            if(ugList.size() < 1){
-                return "redirect:/userGroup";
-            }
+            Group group = groupService.findGroup(sessionUser.getGroup_id());
 
-            int dDays = this.calcMemorialDate(ugList.get(0).getMemorial_date());
+            int dDays = this.calcMemorialDate(group.getMemorial_date());
 
             model.addAttribute("userInfo", sessionUser);
-            model.addAttribute("ugList", ugList);
+            model.addAttribute("group", new GroupResponseDto(group));
             model.addAttribute("dDays", dDays);
 
+            returnUrl = "cal/calendarList";
         }
-        return "cal/calendarList";
+        return "cal/calendarList".equals(returnUrl) ? returnUrl : "redirect:/" + returnUrl;
     }
 
     /**
@@ -91,8 +76,8 @@ public class CalController {
      * @return
      */
     @GetMapping("/calendars/new")
-    public String calendarForm(@RequestParam int groupId, Model model){
-        List<CalendarResponse> calendarList = calendarService.findCalendarList(groupId);
+    public String calendarForm(@RequestParam Long groupId, Model model){
+        List<CalendarResponseDto> calendarList = calendarService.findCalendarList(groupId);
         model.addAttribute("calendarList", calendarList);
         model.addAttribute("groupId", groupId);
         return "cal/calendarForm";
@@ -126,7 +111,7 @@ public class CalController {
      * @return
      */
     @PutMapping("/calendars/{calId}")
-    public String deleteCalendar(@PathVariable int calId){
+    public String deleteCalendar(@PathVariable Long calId){
         calendarService.deleteCalendar(calId);
         return "redirect:/calendars";
     }
@@ -156,38 +141,12 @@ public class CalController {
      */
     @GetMapping("/calendars/detail")
     @ResponseBody
-    public List<Map<String, Object>> calendarsDetailList(CalendarRequest calendarRequest) throws Exception
+    public List<Map<String, Object>> calendarsDetailList(CalendarRequestDto calendarRequestDto) throws Exception
 
     {
-        JSONArray jsonArr = new JSONArray();
-
-        HashMap<String, Object> hash = new HashMap<>();
-
-        List<Calendar> calendarDetailList = calendarService.findCalendarDetailList(calendarRequest);
-        for(Calendar calendar : calendarDetailList){
-            hash.put("color", ColorCode.valueOf(calendar.getColor().toUpperCase()).getRgb_color());
-            hash.put("cal_title", calendar.getCal_title());
-            for(CalendarDetail calendarDetail : calendar.getCalendars()){
-                hash.put("id", calendarDetail.getCal_dtl_id());
-                hash.put("title", calendarDetail.getTitle());
-                hash.put("start", calendarDetail.getStart_date() + "T" + calendarDetail.getStart_time());
-                hash.put("end", getDate(calendarDetail.getEnd_date(), calendarDetail.getAllday_yn()) + "T" + calendarDetail.getEnd_time());
-                hash.put("allDay", calendarDetail.getAllday_yn().equals("Y") ? true : false);
-
-                JSONObject jsonObj = new JSONObject(hash);
-                jsonArr.add(jsonObj);
-            }
-        }
-
-        return jsonArr;
+        return calendarService.findCalendarDetailList(calendarRequestDto);
     }
 
-    // 종료날짜 +1
-    private static String getDate(String date, String allDay) throws ParseException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate endDate = LocalDate.parse(date, formatter);
-        return formatter.format(endDate.plusDays("Y".equals(allDay) ? 1 : 0));
-    }
 
     /**
      * 달력 얼정 상세 등록, 수정, 상세 화면
@@ -196,23 +155,23 @@ public class CalController {
      * @return
      */
     @GetMapping("/calendars/detail/new")
-    public String calendarDetailForm(@RequestParam(required = false, defaultValue = "0") int calDtlId
+    public String calendarDetailForm(@RequestParam(required = false) Long calDtlId
                                     , @RequestParam(required = false) String dateStr
-                                    , @RequestParam int groupId
+                                    , @RequestParam Long groupId
                                     , Model model){
-        CalendarDetail calendarDetail = null;
-        if(calDtlId != 0){
+        CalendarDetailResponseDto calendarDetail = null;
+        if(calDtlId != null){
             calendarDetail = calendarService.findCalendarDetail(calDtlId);
-            int cal_id = calendarDetail.getCalendar().getCal_id();
+            Long cal_id = calendarDetail.getCalendar().getCal_id();
             model.addAttribute("cal_id", cal_id);
         }
-        List<CalendarResponse> calendarList = calendarService.findCalendarList(groupId);
+        List<CalendarResponseDto> calendarList = calendarService.findCalendarList(groupId);
 
 //        model.addAttribute("resultData", calendarDetail);
         model.addAttribute("dateStr", dateStr);
         model.addAttribute("groupId", groupId);
         model.addAttribute("calendarList", calendarList);
-        model.addAttribute("calendarDetailForm", calDtlId == 0 ? new CalendarDetailForm() : calendarDetail);
+        model.addAttribute("calendarDetailForm", calDtlId == null ? new CalendarDetailForm() : calendarDetail);
 
         return "cal/calendarDetailForm";
     }
@@ -225,7 +184,6 @@ public class CalController {
     @PostMapping("/calendars/detail/new")
     public String createCalDetail(@Valid CalendarDetailForm calendarDetailForm){
         calendarService.craete(calendarDetailForm);
-
         return "redirect:/calendars";
     }
 
@@ -246,7 +204,7 @@ public class CalController {
      * @return
      */
     @PutMapping("/calendars/detail/{calDtlId}")
-    public String deleteCalendarDetail(@PathVariable int calDtlId){
+    public String deleteCalendarDetail(@PathVariable Long calDtlId){
         calendarService.deleteCalendarDetail(calDtlId);
         return "redirect:/calendars";
     }

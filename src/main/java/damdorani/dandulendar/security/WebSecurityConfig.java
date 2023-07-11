@@ -3,6 +3,7 @@ package damdorani.dandulendar.security;
 import damdorani.dandulendar.jwt.JwtAuthenticationFilter;
 import damdorani.dandulendar.jwt.JwtTokenProvider;
 import damdorani.dandulendar.oauth2.CustomOAuth2UserService;
+import damdorani.dandulendar.oauth2.LoginUserArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpSession;
 
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpSession;
 public class WebSecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final LoginUserArgumentResolver loginUserArgumentResolver;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -37,11 +39,8 @@ public class WebSecurityConfig {
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService)
         ;
-        // 여기서부터 로그아웃 API 내용~!
         http.logout()
                 .logoutUrl("/logout")   // 로그아웃 처리 URL (= form action url)
-                //.logoutSuccessUrl("/login") // 로그아웃 성공 후 targetUrl,
-                // logoutSuccessHandler 가 있다면 효과 없으므로 주석처리.
                 .addLogoutHandler((request, response, authentication) -> {
                     // 사실 굳이 내가 세션 무효화하지 않아도 됨.
                     // LogoutFilter가 내부적으로 해줌.

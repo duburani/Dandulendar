@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 public class CalendarDetailForm {
-    private int cal_dtl_id;
+    private Long cal_dtl_id;
     @NotEmpty(message = "일정명은 필수 입니다.")
     private String title;
     private String contents;
@@ -18,5 +18,5 @@ public class CalendarDetailForm {
     private String end_time;
     private String repeat_yn;
     private String allday_yn;
-    private int cal_id;
+    private Long cal_id;
 }

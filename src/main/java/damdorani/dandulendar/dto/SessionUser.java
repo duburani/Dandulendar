@@ -11,7 +11,8 @@ public class SessionUser {
         this.email = user.getEmail();
         this.phone = user.getPhone();
         this.provider = user.getProvider();
-        this.couple_code = user.getCouple_code();
+        this.couple_code = user.getCoupleCode();
+        this.group_id = user.getGroup().getGroup_id();;
     }
 
     private String user_id;
@@ -20,4 +21,5 @@ public class SessionUser {
     private String phone;
     private String provider;
     private String couple_code;
+    private Long group_id;
 }

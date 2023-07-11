@@ -1,42 +1,48 @@
 package damdorani.dandulendar.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
+import static org.springframework.data.jpa.domain.AbstractAuditable_.createdDate;
 
 @Entity
 @Getter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class User {
+@DynamicInsert
+public class User extends BaseTimeEntity implements Persistable<String> {
     @Id
     private String user_id;
     private String user_name;
     private String phone;
     private String email;
     private String provider;
-    private String couple_code;
-
-    private LocalDateTime reg_dt;
-    private LocalDateTime mod_dt;
-
-    @PrePersist
-    public void createdAt(){
-        this.reg_dt = LocalDateTime.now();
-        this.mod_dt = LocalDateTime.now();
-    }
+    @Column(name = "couple_code")
+    private String coupleCode;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    @OneToMany(mappedBy = "user")
-    private List<UserGroup> userGroups = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
 
-    protected User() {}
+    @Override
+    public String getId() {
+        return user_id;
+    }
+
+    @Override
+    public boolean isNew() {
+        return createdDate == null;
+    }
+
+    public void setGroup(Group group){
+        this.group = group;
+    }
 }

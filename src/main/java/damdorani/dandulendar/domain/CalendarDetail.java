@@ -2,9 +2,7 @@ package damdorani.dandulendar.domain;
 
 import damdorani.dandulendar.dto.CalendarDetailForm;
 import damdorani.dandulendar.util.CommonUtils;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -18,12 +16,13 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @Table(name="CalendarDetail")
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @DynamicInsert
-public class CalendarDetail {
+public class CalendarDetail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cal_dtl_id;
+    private Long cal_dtl_id;
     private String title;
     private String contents;
     private String start_date;
@@ -42,8 +41,6 @@ public class CalendarDetail {
     @JoinColumn(name = "cal_id")
     private Calendar calendar;
 
-    protected CalendarDetail() {
-    }
 
     /**
      * 달력 일정 수정

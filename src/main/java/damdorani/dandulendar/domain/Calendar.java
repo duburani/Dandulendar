@@ -1,9 +1,7 @@
 package damdorani.dandulendar.domain;
 
 import damdorani.dandulendar.dto.CalendarForm;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
@@ -14,12 +12,13 @@ import java.util.List;
 @Getter
 @Table(name = "Calendar")
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @DynamicInsert
-public class Calendar {
+public class Calendar extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cal_id;
+    private Long cal_id;
 
     private String cal_title;
     private String color;
@@ -30,6 +29,9 @@ public class Calendar {
     @JoinColumn(name = "group_id")
     private Group group;
 
+    @OneToMany(mappedBy = "calendar")
+    private List<CalendarDetail> calendars = new ArrayList<>();
+
     public void updateCal(CalendarForm calendarForm){
         this.cal_title = calendarForm.getCal_title();
         this.color = calendarForm.getColor();
@@ -39,9 +41,4 @@ public class Calendar {
     public void updateDelYn(String del_yn){
         this.del_yn = del_yn;
     }
-
-    protected Calendar() {}
-
-    @OneToMany(mappedBy = "calendar")
-    private List<CalendarDetail> calendars = new ArrayList<>();
 }

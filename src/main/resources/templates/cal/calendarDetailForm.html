@@ -112,14 +112,14 @@
 
           <div class="mb-3">
             <div class="form-check form-switch">
-              <label class="allday_ch">종일</label>
+              <label class="allday_ch" for="allday_ch">종일</label>
               <input class="form-check-input" type="checkbox" id="allday_ch" th:checked="${#strings.equals(#strings.defaultString(calendarDetailForm.allday_yn, 'Y'), 'Y')}">
               <input type="hidden" id="allday_yn" name="allday_yn" th:value="${#strings.defaultString(calendarDetailForm.allday_yn, 'Y')}">
             </div>
           </div>
           <div class="mb-3">
             <div class="form-check form-switch">
-              <label class="repeat_ch">반복</label>
+              <label class="repeat_ch" for="repeat_ch">반복</label>
               <input class="form-check-input" type="checkbox" id="repeat_ch" th:checked="${#strings.equals(#strings.defaultString(calendarDetailForm.repeat_yn, 'N'), 'Y')}">
               <input type="hidden" id="repeat_yn" name="repeat_yn" th:value="${#strings.defaultString(calendarDetailForm.repeat_yn, 'N')}">
             </div>

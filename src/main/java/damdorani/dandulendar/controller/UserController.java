@@ -1,21 +1,22 @@
 package damdorani.dandulendar.controller;
 
+import damdorani.dandulendar.domain.Group;
 import damdorani.dandulendar.domain.User;
 import damdorani.dandulendar.dto.GroupForm;
-import damdorani.dandulendar.dto.UserGroupResponse;
 import damdorani.dandulendar.dto.SessionUser;
+import damdorani.dandulendar.oauth2.LoginUser;
 import damdorani.dandulendar.service.GroupService;
+import damdorani.dandulendar.service.MainService;
 import damdorani.dandulendar.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,8 +24,19 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
     private final GroupService groupService;
-    private final HttpSession session;
+    private final MainService mainService;
 
+    // 그룹 조회
+    @GetMapping("/userGroup")
+    public String userGroup(@RequestParam(required = false, name = "coupleCode") String coupleCode, Model model, @LoginUser SessionUser sessionUser){
+        model.addAttribute("userInfo", sessionUser);
+        model.addAttribute("coupleCode", coupleCode);
+
+        String returnUrl = mainService.returnUrlByUserGroup(sessionUser);
+        return "userGroup".equals(returnUrl) ? "user/" + returnUrl : "redirect:/" + returnUrl;
+    }
+
+    /*
     // 그룹 조회
     @GetMapping("/userGroup")
     public String userGroup(@RequestParam(required = false, name = "coupleCode") String coupleCode, Model model){
@@ -47,23 +59,31 @@ public class UserController {
         model.addAttribute("coupleCode", coupleCode);
         return "user/userGroup";
     }
+     */
 
     // 그룹 생성
     @PostMapping("/userGroup")
-    public String userGroup(@Valid GroupForm groupForm, Model model){
+    public String userGroup(@Valid GroupForm groupForm, Model model, @LoginUser SessionUser sessionUser){
+        // 커플코드 확인
+        User userByCoupleCode = userService.findUserByCoupleCode(groupForm.getCouple_code());
+        if (userByCoupleCode == null)
+            return "";
+        /**
+         * 여기 리턴 어케 시킬건데!!!!!!!
+         *
+         *
+         *
+         *
+         *
+         */
 
         // saveGroup
         model.addAttribute("groupForm", groupForm);
-        int groupId = groupService.saveGroup(groupForm);
+        Group group = groupService.saveGroup(groupForm);
 
-        // saveUserGroup
-        SessionUser objUser = (SessionUser) session.getAttribute("user");
-        groupService.saveUserGroup(objUser.getUser_id(), groupId);
-
-        // CC 찾기
-        Optional<User> userByCode = userService.findUserByCoupleCode(groupForm.getCouple_code());
-        groupService.saveUserGroup(userByCode.get().getUser_id(), groupId);
-
+        // User에 Group 저장
+        userService.setGroup(sessionUser.getUser_id(), group);
+        userService.setGroup(userByCoupleCode.getUser_id(), group);
 
         return "redirect:/calendars";
     }

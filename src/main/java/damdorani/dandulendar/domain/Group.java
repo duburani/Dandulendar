@@ -1,8 +1,6 @@
 package damdorani.dandulendar.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
@@ -12,20 +10,20 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @DynamicInsert
 @Table(name = "Groupz")
-public class Group {
+public class Group extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int group_id;
+    private Long group_id;
     private String memorial_date;
     private String drop_yn;
 
-    @OneToMany(mappedBy = "group")
-    private List<UserGroup> userGroups = new ArrayList<>();
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    private List<User> userList = new ArrayList<>();
 
-    protected Group() {
-
-    }
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    private List<Calendar> calendarList = new ArrayList<>();
 }
