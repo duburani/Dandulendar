@@ -15,35 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
     private final MainService mainService;
 
-
     @GetMapping("/")
     public String login(Model model, @LoginUser SessionUser sessionUser) {
         String returnUrl = mainService.returnUrlByUserGroup(sessionUser);
         return "main".equals(returnUrl) ? returnUrl : "redirect:/" + returnUrl;
     }
-
-    /*
-    @GetMapping("/")
-    public String login(Model model) {
-        String returnUrl = "main";
-
-        Object objUser = session.getAttribute("user");
-        if(objUser != null){
-            SessionUser sessionUser = (SessionUser) objUser;
-            String userId = sessionUser.getUser_id();
-            List<UserGroupResponse> groupList = groupService.findGroupByUserId(userId);
-
-            if(groupList.size() < 1){
-                returnUrl = "redirect:/userGroup";
-            }else{
-                returnUrl = "redirect:/calendars";
-            }
-
-            model.addAttribute("userInfo", sessionUser);
-            model.addAttribute("groupInfo", groupList);
-        }
-
-        return returnUrl;
-    }
-     */
 }

@@ -36,31 +36,6 @@ public class UserController {
         return "userGroup".equals(returnUrl) ? "user/" + returnUrl : "redirect:/" + returnUrl;
     }
 
-    /*
-    // 그룹 조회
-    @GetMapping("/userGroup")
-    public String userGroup(@RequestParam(required = false, name = "coupleCode") String coupleCode, Model model){
-        Object objUser = session.getAttribute("user");
-        if(objUser != null){
-            SessionUser sessionUser = (SessionUser) objUser;
-            String userId = sessionUser.getUser_id();
-            List<UserGroupResponse> groupList = groupService.findGroupByUserId(userId);
-
-            if(groupList.size() > 1){
-                model.addAttribute("groupInfo", groupList);
-                return "redirect:/calendars";
-            }
-
-            model.addAttribute("userInfo", sessionUser);
-        }else{
-            return "redirect:/";
-        }
-
-        model.addAttribute("coupleCode", coupleCode);
-        return "user/userGroup";
-    }
-     */
-
     // 그룹 생성
     @PostMapping("/userGroup")
     public String userGroup(@Valid GroupForm groupForm, Model model, @LoginUser SessionUser sessionUser){

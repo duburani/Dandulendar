@@ -17,9 +17,4 @@ public class DandulendarApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DandulendarApplication.class, args);
 	}
-
-//	@Bean
-//	public AuditorAware<String> auditorProvider() {
-//		return () -> Optional.of(null);
-//	}
 }

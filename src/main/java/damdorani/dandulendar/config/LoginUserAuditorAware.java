@@ -21,14 +21,5 @@ public class LoginUserAuditorAware implements AuditorAware<String> {
             return null;
 
         return Optional.ofNullable(user.getUser_id());
-
-        // Spring Security를 통한 Auditor 매핑
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication == null || !authentication.isAuthenticated()) {
-//            return null;
-//        }
-//
-//        return (Optional<User>) authentication.getPrincipal();
-//        return Optional.empty();
     }
 }
