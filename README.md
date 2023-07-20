@@ -1,17 +1,24 @@
 # 단두린더
+단둘이서 단두린더
 
+![img_3.png](img_3.png)
 
-### 1번 문제
-- 개발언어 : Java / 프레임워크 : Spring Boot
-- 게시판 기능을 구현하기 위해 스프링부트를 사용하였고, 화면 보다는 자료구조를 나타내는 게 중점이기 때문에 view 없이 http 요청을 통해 Json 형태로 정보를 받아오는 restAPI 형식으로 만들었습니다.
-- 요구사항을 토대로 남자, 여자, 엑소, 방탄소년단, 블랙핑크는 각각의 카테고리이며 나머지 공지사항, 첸, 익명게시판 등은 게시판으로 구분했습니다.
-- 카테고리(CATE)와 게시판(BOARD)이 다대다 관계로 확인되어 중간에 매핑테이블을 중심으로 일대다 다대일 관계를 형성하였습니다.
-- 계층형으로 저장된 관계를 일대다 형식인 List에 담아 자료구조 형태로 표현했습니다.
-- 완성된 api 는 id, name 또는 빈칸으로 전송하여 값을 확인할 수 있습니다.
-- 요구사항에 카테고리 식별자와 카테고리 명으로 검색을 요구하였기에 게시판은 검색 기능에 추가하지 않았습니다.
-- 카테고리와 게시판의 간단한 관계를 나타내는 프로젝트여서 따로 패키지를 구분짓지 않고 구현하였습니다.
+----
 
+### 기술 스택
+- Java 11
+- SpringBoot
+- Spring Data JPA
+- Gradle
+- MySQL
+- AWS
+- TypeScript
 
-### 2번 문제
-- 개발언어 : Java
-- dp 함수를 이용하여 풀이하였습니다.
+### 주요 기술
+- [서비스 기획부터 데이터 모델링, 기타 프로젝트 설정까지 전담하여 업무 수행](https://duburani.tistory.com/26)
+  - ![img.png](img.png)
+- [Spring Security를 적용하고 OAuth2를 활용해 회원가입, 로그인 기능 구현](https://duburani.tistory.com/30)
+  - ![img_2.png](img_2.png)
+- [fullCalendar API를 활용하여 달력 구현](https://duburani.tistory.com/28)
+  - ![img_1.png](img_1.png)
+- [QueryDSL를 활용하여 복잡한 쿼리 조회](https://duburani.tistory.com/42)

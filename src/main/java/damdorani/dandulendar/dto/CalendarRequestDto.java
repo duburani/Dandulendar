@@ -13,5 +13,5 @@ public class CalendarRequestDto {
     private LocalDateTime startStr;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime endStr;
-    private int groupId;
+    private Long groupId;
 }
