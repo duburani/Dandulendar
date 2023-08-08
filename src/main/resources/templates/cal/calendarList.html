@@ -21,21 +21,41 @@
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 headerToolbar: {
-                    right: 'addEventButton prev,next today'
-                }
-                , editable: true
-                , selectable: true
-                , events: function (info, successCallback) {
-                    successCallback(calendarDetailList(info));
+                    right: 'addCalBtn sendMailBtn prev,next today'
                 }
                 , customButtons: {
-                    addEventButton: {
+                    addCalBtn: {
                         text: "달력추가",
                         click: function () {
                             setCal();
                             $("#calendarCateModal").modal('show');
                         }
+                    },
+                    sendMailBtn: {
+                        text: "메일전송",
+                        click: function () {
+                            const data = {
+                                'email' : $("#email").val()
+                            }
+                            $.ajax({
+                                url: "/mail"
+                                , method: "POST"
+                                , async: false
+                                , dataType: "JSON"
+                                ,contentType: "application/json; charset=utf-8"
+                                , data: JSON.stringify(data)
+                                , success: function (data) {
+                                    alert(data);
+                                    console.log(data);
+                                }
+                            });
+                        }
                     }
+                }
+                , editable: true
+                , selectable: true
+                , events: function (info, successCallback) {
+                    successCallback(calendarDetailList(info));
                 }
                 , dateClick: function (info) {
                     setCalDtl('I', info);
@@ -107,6 +127,7 @@
             let calId = type == 'I' ? "" : info.event.id;
             let dateStr = type == 'I' ? info.dateStr : "";
             let data = {"calDtlId": calId, "dateStr": dateStr, "groupId" : $("#groupId").val()};
+
             $.ajax({
                 url: "/calendars/detail/new"
                 , method: "GET"
@@ -117,7 +138,6 @@
                     $("#calendarDetailModal").modal('show');
                 }
             });
-
 
             $('table.fc-scrollgrid tbody tr:not(.fc-minor)').each(function(){
                 $(this).find("th:first-child").css("font-size", "12px").attr('rowSpan',4);
@@ -150,6 +170,7 @@
 <div layout:fragment="content" id="calendarBody">
     <div>
         <input type="hidden" id="groupId" th:value="${group.group_id}">
+        <input type="hidden" id="email" th:value="${userInfo.getEmail()}">
 
 
         <div class="modal fade" id="calendarCateModal" tabindex="-1" aria-labelledby="calendarCateModalLabel"

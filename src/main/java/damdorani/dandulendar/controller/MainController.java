@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
     private final MainService mainService;
 
-    @GetMapping("/")
+    @GetMapping(value = {"/", "/main"})
     public String login(Model model, @LoginUser SessionUser sessionUser) {
         String returnUrl = mainService.returnUrlByUserGroup(sessionUser);
         return "main".equals(returnUrl) ? returnUrl : "redirect:/" + returnUrl;

@@ -142,7 +142,6 @@ public class CalController {
     @GetMapping("/calendars/detail")
     @ResponseBody
     public List<Map<String, Object>> calendarsDetailList(CalendarRequestDto calendarRequestDto) throws Exception
-
     {
         return calendarService.findCalendarDetailList(calendarRequestDto);
     }
@@ -158,7 +157,7 @@ public class CalController {
     public String calendarDetailForm(@RequestParam(required = false) Long calDtlId
                                     , @RequestParam(required = false) String dateStr
                                     , @RequestParam Long groupId
-                                    , Model model){
+                                    , Model model) {
         CalendarDetailResponseDto calendarDetail = null;
         if(calDtlId != null){
             calendarDetail = calendarService.findCalendarDetail(calDtlId);
